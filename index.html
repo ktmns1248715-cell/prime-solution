@@ -49,7 +49,6 @@
                 </button>
             </div>
 
-            <!-- 사업자 및 제작/운영 정보 -->
             <div class="mt-5 pt-4 border-t border-slate-100 bg-slate-50 -mx-6 -mb-6 sm:-mx-8 sm:-mb-8 p-4 rounded-b-2xl text-[11px] text-slate-500 space-y-1">
                 <div class="font-bold text-slate-700 flex items-center">
                     <i class="fa-solid fa-building-shield text-red-600 mr-1.5"></i>KT M&S 동부영업단 동부법인지사
@@ -107,7 +106,7 @@
                 </div>
                 <div class="flex items-center space-x-2">
                     <span id="price-sync-status" class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center">
-                        <i class="fa-solid fa-cloud-check mr-1 text-emerald-500"></i>단말 71종 준비완료
+                        <i class="fa-solid fa-cloud-check mr-1 text-emerald-500"></i>시트 실시간 연동중
                     </span>
                     <span id="logged-corp-badge" class="text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-full">인증: -</span>
                     <button type="button" onclick="logout()" class="text-xs text-slate-400 hover:text-slate-700 p-1">로그아웃</button>
@@ -126,7 +125,7 @@
                 <!-- 좌측 설정 영역 -->
                 <div class="lg:col-span-7 bg-white p-5 sm:p-7 rounded-2xl border shadow-sm space-y-5">
                     
-                    <!-- Tab 1: 임직원 -->
+                    <!-- Tab 1: 임직원 휴대폰 -->
                     <div id="content-employee" class="tab-content space-y-4">
                         <div class="border-b pb-2">
                             <h2 class="text-base font-bold text-slate-900">임직원 본인 전용 견적</h2>
@@ -165,7 +164,7 @@
                         </div>
                     </div>
 
-                    <!-- Tab 2: 가족 -->
+                    <!-- Tab 2: 가족/지인 휴대폰 -->
                     <div id="content-family" class="tab-content space-y-4 hidden">
                         <div class="border-b pb-2">
                             <h2 class="text-base font-bold text-slate-900">가족·지인 추천 견적</h2>
@@ -204,27 +203,28 @@
                         </div>
                     </div>
 
-                    <!-- Tab 3: 홈결합 -->
+                    <!-- Tab 3: 인터넷 + TV 특가 -->
                     <div id="content-home" class="tab-content space-y-4 hidden">
                         <div class="border-b pb-2">
                             <h2 class="text-base font-bold text-slate-900">인터넷 + IPTV 결합 견적</h2>
+                            <p class="text-[11px] text-slate-500">속도별 기가 인터넷 + 지니TV 결합 패키지</p>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">1. 인터넷 속도</label>
-                            <select id="home-speed" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none" onchange="calcHome()"></select>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">1. 인터넷 속도 선택</label>
+                            <select id="home-speed" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none focus:ring-2 focus:ring-red-500 font-medium" onchange="calcHome()"></select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">2. IPTV 상품</label>
-                            <select id="home-tv" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none" onchange="calcHome()"></select>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">2. IPTV 상품 선택</label>
+                            <select id="home-tv" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none focus:ring-2 focus:ring-red-500 font-medium" onchange="calcHome()"></select>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">3. 셋톱박스</label>
-                                <select id="home-settop" class="w-full bg-slate-50 border rounded-lg p-2 text-xs outline-none" onchange="calcHome()"></select>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">3. 셋톱박스 모델</label>
+                                <select id="home-settop" class="w-full bg-slate-50 border rounded-lg p-2 text-xs outline-none focus:ring-2 focus:ring-red-500 font-medium" onchange="calcHome()"></select>
                             </div>
                             <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">4. 와이파이</label>
-                                <select id="home-wifi" class="w-full bg-slate-50 border rounded-lg p-2 text-xs outline-none" onchange="calcHome()"></select>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">4. 와이파이 공유기</label>
+                                <select id="home-wifi" class="w-full bg-slate-50 border rounded-lg p-2 text-xs outline-none focus:ring-2 focus:ring-red-500 font-medium" onchange="calcHome()"></select>
                             </div>
                         </div>
                     </div>
@@ -241,14 +241,16 @@
                     </div>
                 </div>
 
-                <!-- 우측 결과 패널 -->
+                <!-- 우측 결과 패널 (무선/유선 동적 전환) -->
                 <div class="lg:col-span-5">
                     <div class="bg-slate-900 text-white p-5 sm:p-6 rounded-2xl lg:sticky lg:top-24 border border-slate-800 shadow-xl space-y-4">
                         <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                             <span class="text-xs font-bold text-red-400">견적 산출 내역</span>
                             <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">VAT 포함</span>
                         </div>
-                        <div class="space-y-2 text-xs">
+
+                        <!-- A. 무선(휴대폰) 전용 견적 내역 -->
+                        <div id="panel-mobile" class="space-y-2 text-xs">
                             <div class="flex justify-between text-slate-300">
                                 <span>선택 상품</span>
                                 <span id="out-name" class="font-bold text-white max-w-[180px] truncate text-right">-</span>
@@ -274,12 +276,42 @@
                                 <div class="flex justify-between"><span>월 단말 청구액:</span><span id="detail-dev" class="text-slate-200">0 원</span></div>
                                 <div class="flex justify-between"><span>월 통신 청구액:</span><span id="detail-plan" class="text-slate-200">0 원</span></div>
                             </div>
+                        </div>
 
-                            <div class="pt-2 border-t border-slate-800 flex justify-between items-end">
-                                <div>
-                                    <p class="text-[11px] text-slate-400">최종 체감 월 통신료</p>
-                                    <p class="text-2xl font-extrabold text-white" id="out-price">0 원</p>
+                        <!-- B. 유선(인터넷+TV) 전용 견적 내역 -->
+                        <div id="panel-home" class="space-y-2 text-xs hidden">
+                            <div class="flex justify-between text-slate-300">
+                                <span>선택 패키지</span>
+                                <span id="home-out-name" class="font-bold text-white max-w-[180px] truncate text-right">-</span>
+                            </div>
+                            <div class="flex justify-between text-slate-300">
+                                <span>약정 조건</span>
+                                <span class="text-slate-200 text-right">3년 약정 결합 기준</span>
+                            </div>
+                            
+                            <!-- 시트 H열 연동 가입 추가지원금 단독 표기 -->
+                            <div class="flex justify-between text-emerald-400 font-bold bg-emerald-950/40 p-2 rounded-lg border border-emerald-800/50">
+                                <span>가입 추가지원금 (사은혜택)</span>
+                                <span id="home-out-gift">0 원</span>
+                            </div>
+
+                            <!-- 세부 요금 합산 명세 -->
+                            <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1 my-2">
+                                <div class="flex justify-between"><span>인터넷 요금:</span><span id="home-detail-net" class="text-slate-200">0 원</span></div>
+                                <div class="flex justify-between"><span>IPTV 요금:</span><span id="home-detail-tv" class="text-slate-200">0 원</span></div>
+                                <div class="flex justify-between"><span>셋톱박스 요금:</span><span id="home-detail-st" class="text-slate-200">0 원</span></div>
+                                <div class="flex justify-between"><span>와이파이 요금:</span><span id="home-detail-wf" class="text-slate-200">0 원</span></div>
+                                <div class="flex justify-between text-red-400 pt-1 border-t border-slate-800 font-semibold">
+                                    <span>결합할인 혜택:</span><span>- 11,000 원</span>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- 최종 월 요금 (공통) -->
+                        <div class="pt-2 border-t border-slate-800 flex justify-between items-end">
+                            <div>
+                                <p class="text-[11px] text-slate-400" id="final-label">최종 체감 월 통신료</p>
+                                <p class="text-2xl font-extrabold text-white" id="out-price">0 원</p>
                             </div>
                         </div>
                     </div>
@@ -299,11 +331,10 @@
         </button>
     </div>
 
-    <!-- 4. 통합 스크립트 (71종 내장 + JSONP CORS 프리 실시간 동기화) -->
+    <!-- 4. 통합 스크립트 -->
     <script>
         const APPS_URL = "https://script.google.com/macros/s/AKfycbyMkt2f6ed9kub5W6rBMY-Jg1dsimfOy7ACbwv9aIoKP8sBd6JNg6VcSP3S6kvBxiHa/exec";
         
-        // 71종 전체 단말 탑재 (임직원 50,000원 / 가족 10,000원 시트 기준 완벽 일치)
         let DB = {
             devices: {
                 "SM-S948NK": { name: "갤럭시 S26 Ultra", price: 1797400, mnp: 500000, chg: 500000, new: 500000, empExtra: 50000, famExtra: 10000 },
@@ -387,10 +418,10 @@
                 { code: "P45", name: "베이직7GB (45요금제)", price: 45000 }
             ],
             internet: [
-                { code: "NET100", name: "인터넷 슬림 100M", price: 22000 },
-                { code: "NET500", name: "인터넷 베이직 500M", price: 33000 },
-                { code: "NET1G", name: "인터넷 에센스 1G", price: 38500 },
-                { code: "NET2G5", name: "인터넷 프리미엄 2.5G", price: 44000 }
+                { code: "NET100", name: "인터넷 슬림 100M", price: 22000, empExtra: 50000, famExtra: 20000 },
+                { code: "NET500", name: "인터넷 베이직 500M", price: 33000, empExtra: 100000, famExtra: 50000 },
+                { code: "NET1G", name: "인터넷 에센스 1G", price: 38500, empExtra: 100000, famExtra: 50000 },
+                { code: "NET2G5", name: "인터넷 프리미엄 2.5G", price: 44000, empExtra: 100000, famExtra: 50000 }
             ],
             iptv: [
                 { code: "TV_BASIC", name: "지니TV 베이직", price: 12100 },
@@ -455,6 +486,18 @@
             curTab = t;
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById(`content-${t}`).classList.remove('hidden');
+            
+            // 결과 패널 전환
+            if (t === 'home') {
+                document.getElementById('panel-mobile').classList.add('hidden');
+                document.getElementById('panel-home').classList.remove('hidden');
+                document.getElementById('final-label').innerText = '최종 월 이용요금 (결합할인 후)';
+            } else {
+                document.getElementById('panel-mobile').classList.remove('hidden');
+                document.getElementById('panel-home').classList.add('hidden');
+                document.getElementById('final-label').innerText = '최종 체감 월 통신료';
+            }
+
             ['employee', 'family', 'home'].forEach(k => {
                 const b = document.getElementById(`tab-${k}`);
                 b.className = k === t 
@@ -512,7 +555,7 @@
             const instLabel = empInst === 0 ? '일시납' : `${empInst}개월할부`;
 
             detailText = `[임직원] ${dev.name} | ${joinLabel} | ${discLabel} | ${instLabel} | 월 ${fmt(finalWon)}원`;
-            renderOut(dev.name, `${joinLabel} / ${discLabel} / ${instLabel}`, dev.price, totalDisc, principal, Math.round(devMonthly), Math.round(planMonthly), finalWon);
+            renderMobileOut(dev.name, `${joinLabel} / ${discLabel} / ${instLabel}`, dev.price, totalDisc, principal, Math.round(devMonthly), Math.round(planMonthly), finalWon);
         }
 
         function calcFam() {
@@ -534,22 +577,10 @@
             const instLabel = famInst === 0 ? '일시납' : `${famInst}개월할부`;
 
             detailText = `[가족] ${dev.name} | ${joinLabel} | ${discLabel} | ${instLabel} | 월 ${fmt(finalWon)}원`;
-            renderOut(dev.name, `${joinLabel} / ${discLabel} / ${instLabel}`, dev.price, totalDisc, principal, Math.round(devMonthly), Math.round(planMonthly), finalWon);
+            renderMobileOut(dev.name, `${joinLabel} / ${discLabel} / ${instLabel}`, dev.price, totalDisc, principal, Math.round(devMonthly), Math.round(planMonthly), finalWon);
         }
 
-        function calcHome() {
-            const s = Number(document.getElementById('home-speed').value || 0);
-            const t = Number(document.getElementById('home-tv').value || 0);
-            const st = Number(document.getElementById('home-settop').value || 0);
-            const w = Number(document.getElementById('home-wifi').value || 0);
-            const raw = s + t + st + w;
-            const comboDiscount = 11000;
-            finalWon = raw - comboDiscount;
-            detailText = `[홈결합] 인터넷+IPTV+셋톱+WiFi (월 ${fmt(finalWon)}원)`;
-            renderOut("인터넷+TV 결합 패키지", "3년 약정 결합", raw, comboDiscount, 0, 0, finalWon, finalWon);
-        }
-
-        function renderOut(n, c, base, disc, prin, devM, planM, finalP) {
+        function renderMobileOut(n, c, base, disc, prin, devM, planM, finalP) {
             document.getElementById('out-name').innerText = n;
             document.getElementById('out-cond').innerText = c;
             document.getElementById('out-base').innerText = `${fmt(base)} 원`;
@@ -560,6 +591,40 @@
             document.getElementById('out-price').innerText = `${fmt(finalP)} 원/월`;
             const mp = document.getElementById('mobile-price');
             if (mp) mp.innerText = `${fmt(finalP)} 원/월`;
+        }
+
+        // 인터넷+TV 결합 전용 연산 (시트 H열 가입 추가지원금 단독 연동)
+        function calcHome() {
+            const netIdx = document.getElementById('home-speed').selectedIndex;
+            const netObj = DB.internet[netIdx] || { price: 33000, name: "인터넷 베이직 500M", empExtra: 100000 };
+            
+            const netPrice = Number(netObj.price || 0);
+            const tvPrice = Number(document.getElementById('home-tv').value || 0);
+            const stPrice = Number(document.getElementById('home-settop').value || 0);
+            const wfPrice = Number(document.getElementById('home-wifi').value || 0);
+
+            // 시트 H열에 등록된 인터넷 추가지원금
+            const giftMoney = Number(netObj.empExtra || 0);
+
+            const rawSum = netPrice + tvPrice + stPrice + wfPrice;
+            const comboDiscount = 11000;
+            finalWon = rawSum - comboDiscount;
+
+            const tvName = document.getElementById('home-tv').options[document.getElementById('home-tv').selectedIndex]?.text.split(' (')[0] || '';
+            const pkgTitle = `${netObj.name} + ${tvName}`;
+
+            detailText = `[홈결합] ${pkgTitle} | 3년약정 | 추가지원: ${fmt(giftMoney)}원 | 월 ${fmt(finalWon)}원`;
+
+            document.getElementById('home-out-name').innerText = pkgTitle;
+            document.getElementById('home-out-gift').innerText = `+ ${fmt(giftMoney)} 원 지급`;
+            document.getElementById('home-detail-net').innerText = `월 ${fmt(netPrice)} 원`;
+            document.getElementById('home-detail-tv').innerText = `월 ${fmt(tvPrice)} 원`;
+            document.getElementById('home-detail-st').innerText = `월 ${fmt(stPrice)} 원`;
+            document.getElementById('home-detail-wf').innerText = `월 ${fmt(wfPrice)} 원`;
+
+            document.getElementById('out-price').innerText = `${fmt(finalWon)} 원/월`;
+            const mp = document.getElementById('mobile-price');
+            if (mp) mp.innerText = `${fmt(finalWon)} 원/월`;
         }
 
         async function submitApply() {
@@ -596,7 +661,8 @@
                     body: JSON.stringify({
                         action: "SUBMIT_LEAD",
                         corp: sessionStorage.getItem('AUTH_CORP') || "미지정",
-                        category: curTab, name, phone,
+                        category: curTab === 'home' ? '인터넷+TV 결합' : (curTab === 'employee' ? '임직원 휴대폰' : '가족 휴대폰'),
+                        name: name, phone: phone,
                         planDetails: detailText, price: `${fmt(finalWon)}원/월`
                     })
                 });
@@ -648,20 +714,47 @@
             }
 
             const sSel = document.getElementById('home-speed');
-            if (sSel && sSel.options.length === 0) DB.internet.forEach(i => sSel.add(new Option(`${i.name} (월 ${fmt(i.price)}원)`, i.price)));
-            const tvSel = document.getElementById('home-tv');
-            if (tvSel && tvSel.options.length === 0) DB.iptv.forEach(t => tvSel.add(new Option(`${t.name} (월 ${fmt(t.price)}원)`, t.price)));
-            const stSel = document.getElementById('home-settop');
-            if (stSel && stSel.options.length === 0) DB.settop.forEach(s => stSel.add(new Option(`${s.name} (월 ${fmt(s.price)}원)`, s.price)));
-            const wfSel = document.getElementById('home-wifi');
-            if (wfSel && wfSel.options.length === 0) DB.wifi.forEach(w => wfSel.add(new Option(`${w.name} (월 ${fmt(w.price)}원)`, w.price)));
+            if (sSel && sSel.options.length === 0) {
+                DB.internet.forEach((i, idx) => {
+                    const opt = new Option(`${i.name} (월 ${fmt(i.price)}원)`, i.price);
+                    if (idx === 1) opt.selected = true; // 500M 기본 선택
+                    sSel.add(opt);
+                });
+            }
 
-            calcEmp();
+            const tvSel = document.getElementById('home-tv');
+            if (tvSel && tvSel.options.length === 0) {
+                DB.iptv.forEach((t, idx) => {
+                    const opt = new Option(`${t.name} (월 ${fmt(t.price)}원)`, t.price);
+                    if (idx === 0) opt.selected = true;
+                    tvSel.add(opt);
+                });
+            }
+
+            const stSel = document.getElementById('home-settop');
+            if (stSel && stSel.options.length === 0) {
+                DB.settop.forEach((s, idx) => {
+                    const opt = new Option(`${s.name} (월 ${fmt(s.price)}원)`, s.price);
+                    if (idx === 0) opt.selected = true;
+                    stSel.add(opt);
+                });
+            }
+
+            const wfSel = document.getElementById('home-wifi');
+            if (wfSel && wfSel.options.length === 0) {
+                DB.wifi.forEach((w, idx) => {
+                    const opt = new Option(`${w.name} (월 ${fmt(w.price)}원)`, w.price);
+                    if (idx === 0) opt.selected = true;
+                    wfSel.add(opt);
+                });
+            }
+
+            if (curTab === 'home') calcHome(); else calcEmp();
         }
 
         window.onload = function() {
-            renderUI(); // 1단계: 즉각 71종 화면 렌더링 (빈칸 원천 차단)
-            fetchPriceMasterJSONP(); // 2단계: 브라우저 CORS 차단 없는 JSONP 실시간 덮어쓰기
+            renderUI();
+            fetchPriceMasterJSONP();
             
             const saved = sessionStorage.getItem('AUTH_CORP');
             if (saved) {
