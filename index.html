@@ -97,7 +97,7 @@
                     <label class="block text-xs font-semibold text-slate-700 mb-1">회사 이메일</label>
                     <input type="email" id="req-email" placeholder="example@company.com" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none">
                 </div>
-                <button type="submit" onclick="submitApply()" id="btn-apply" class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs sm:text-sm mt-2 cursor-pointer shadow-md">
+                <button type="button" onclick="submitApply()" id="btn-apply" class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs sm:text-sm mt-2 cursor-pointer shadow-md">
                     제휴 승인 요청 등록
                 </button>
             </div>
@@ -114,7 +114,7 @@
                     <span class="text-base sm:text-lg font-extrabold tracking-tight">Prime Benefit <span class="text-red-600">Solution</span></span>
                 </div>
                 <div class="flex items-center space-x-2">
-                    <span id="price-sync-status" class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full hidden sm:inline-block">시트 71종 연동됨</span>
+                    <span id="price-sync-status" class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full hidden sm:inline-block">단말 71종 로드됨</span>
                     <span id="logged-corp-badge" class="text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-full">인증: -</span>
                     <button type="button" onclick="logout()" class="text-xs text-slate-400 hover:text-slate-700 p-1">로그아웃</button>
                 </div>
@@ -143,7 +143,7 @@
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">1. 단말기 모델 선택</label>
-                            <select id="emp-device" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none focus:ring-2 focus:ring-red-500" onchange="calcEmp()"></select>
+                            <select id="emp-device" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none focus:ring-2 focus:ring-red-500 font-medium" onchange="calcEmp()"></select>
                         </div>
 
                         <div>
@@ -178,7 +178,7 @@
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">5. 요금제 선택</label>
-                            <select id="emp-plan" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none focus:ring-2 focus:ring-red-500" onchange="calcEmp()"></select>
+                            <select id="emp-plan" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none focus:ring-2 focus:ring-red-500 font-medium" onchange="calcEmp()"></select>
                         </div>
                     </div>
 
@@ -191,7 +191,7 @@
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">1. 단말기 모델 선택</label>
-                            <select id="fam-device" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none focus:ring-2 focus:ring-red-500" onchange="calcFam()"></select>
+                            <select id="fam-device" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none focus:ring-2 focus:ring-red-500 font-medium" onchange="calcFam()"></select>
                         </div>
 
                         <div>
@@ -226,7 +226,7 @@
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">5. 요금제 선택</label>
-                            <select id="fam-plan" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none focus:ring-2 focus:ring-red-500" onchange="calcFam()"></select>
+                            <select id="fam-plan" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none focus:ring-2 focus:ring-red-500 font-medium" onchange="calcFam()"></select>
                         </div>
                     </div>
 
@@ -328,17 +328,111 @@
         </button>
     </div>
 
-    <!-- 4. 통합 컨트롤 스크립트 -->
+    <!-- 4. 통합 컨트롤 스크립트 (71종 전체 모델 내장 완비) -->
     <script>
         const APPS_URL = "https://script.google.com/macros/s/AKfycbyMkt2f6ed9kub5W6rBMY-Jg1dsimfOy7ACbwv9aIoKP8sBd6JNg6VcSP3S6kvBxiHa/exec";
         
+        // 71종 전체 단말 기본 탑재 (통신 지연 시에도 즉시 렌더링 보증)
         let DB = {
-            devices: {},
-            plans: [],
-            internet: [],
-            iptv: [],
-            settop: [],
-            wifi: []
+            devices: {
+                "SM-S948NK": { name: "갤럭시 S26 Ultra", price: 1797400, mnp: 500000, chg: 500000, new: 500000, empExtra: 150000, famExtra: 50000 },
+                "SM-S948NK512": { name: "갤럭시 S26 Ultra 512GB", price: 2050400, mnp: 500000, chg: 500000, new: 500000, empExtra: 150000, famExtra: 50000 },
+                "SM-S947NK": { name: "갤럭시 S26+", price: 1452000, mnp: 500000, chg: 500000, new: 500000, empExtra: 150000, famExtra: 50000 },
+                "SM-S947NK512": { name: "갤럭시 S26+ 512GB", price: 1705000, mnp: 500000, chg: 500000, new: 500000, empExtra: 150000, famExtra: 50000 },
+                "SM-S942NK": { name: "갤럭시 S26", price: 1254000, mnp: 500000, chg: 500000, new: 500000, empExtra: 150000, famExtra: 50000 },
+                "SM-S942NK512": { name: "갤럭시 S26 512GB", price: 1507000, mnp: 500000, chg: 500000, new: 500000, empExtra: 150000, famExtra: 50000 },
+                "SM-S938NK": { name: "갤럭시 S25 Ultra", price: 1698400, mnp: 500000, chg: 500000, new: 500000, empExtra: 150000, famExtra: 50000 },
+                "SM-S938NK512": { name: "갤럭시 S25 Ultra 512GB", price: 1841400, mnp: 500000, chg: 500000, new: 500000, empExtra: 150000, famExtra: 50000 },
+                "SM-S936NK": { name: "갤럭시 S25+", price: 1353000, mnp: 500000, chg: 500000, new: 500000, empExtra: 150000, famExtra: 50000 },
+                "SM-S936NK512": { name: "갤럭시 S25+ 512GB", price: 1496000, mnp: 500000, chg: 500000, new: 500000, empExtra: 150000, famExtra: 50000 },
+                "SM-S931NK": { name: "갤럭시 S25", price: 1155000, mnp: 500000, chg: 500000, new: 500000, empExtra: 150000, famExtra: 50000 },
+                "SM-S931NK512": { name: "갤럭시 S25 512GB", price: 1298000, mnp: 500000, chg: 500000, new: 500000, empExtra: 150000, famExtra: 50000 },
+                "SM-S937NK": { name: "갤럭시 S25 엣지", price: 1496000, mnp: 500000, chg: 500000, new: 500000, empExtra: 150000, famExtra: 50000 },
+                "SM-S937NK512": { name: "갤럭시 S25 엣지 512GB", price: 1639000, mnp: 500000, chg: 500000, new: 500000, empExtra: 150000, famExtra: 50000 },
+                "SM-S731NK": { name: "갤럭시S25 FE", price: 946000, mnp: 500000, chg: 500000, new: 500000, empExtra: 100000, famExtra: 50000 },
+                "SM-F966NK": { name: "갤럭시 Z Fold7", price: 2379300, mnp: 500000, chg: 500000, new: 500000, empExtra: 200000, famExtra: 100000 },
+                "SM-F966NK512": { name: "갤럭시 Z Fold7 512GB", price: 2537700, mnp: 500000, chg: 500000, new: 500000, empExtra: 200000, famExtra: 100000 },
+                "SM-F766NK": { name: "갤럭시 Z Flip7", price: 1485000, mnp: 500000, chg: 500000, new: 500000, empExtra: 150000, famExtra: 50000 },
+                "SM-F766NK512": { name: "갤럭시 Z Flip7 512GB", price: 1643400, mnp: 500000, chg: 500000, new: 500000, empExtra: 150000, famExtra: 50000 },
+                "SM-F761NK": { name: "갤럭시 Z Flip7 FE", price: 1199000, mnp: 500000, chg: 500000, new: 500000, empExtra: 150000, famExtra: 50000 },
+                "SM-F956NK": { name: "갤럭시 Z Fold6", price: 2229700, mnp: 700000, chg: 700000, new: 700000, empExtra: 200000, famExtra: 100000 },
+                "SM-F956NK512": { name: "갤럭시 Z Fold6 512GB", price: 2388100, mnp: 700000, chg: 700000, new: 700000, empExtra: 200000, famExtra: 100000 },
+                "SM-F741NK": { name: "갤럭시 Z Flip6", price: 1485000, mnp: 700000, chg: 700000, new: 700000, empExtra: 150000, famExtra: 50000 },
+                "SM-F741NK512": { name: "갤럭시 Z Flip6 512GB", price: 1643400, mnp: 700000, chg: 700000, new: 700000, empExtra: 150000, famExtra: 50000 },
+                "AIP17PM-256": { name: "iPhone 17 Pro Max 256GB", price: 1980000, mnp: 450000, chg: 450000, new: 450000, empExtra: 100000, famExtra: 0 },
+                "AIP17PM-512": { name: "iPhone 17 Pro Max 512GB", price: 2288000, mnp: 450000, chg: 450000, new: 450000, empExtra: 100000, famExtra: 0 },
+                "AIP17PM-1T": { name: "iPhone 17 Pro Max 1TB", price: 2585000, mnp: 450000, chg: 450000, new: 450000, empExtra: 100000, famExtra: 0 },
+                "AIP17PM-2T": { name: "iPhone 17 Pro Max 2TB", price: 3190000, mnp: 450000, chg: 450000, new: 450000, empExtra: 100000, famExtra: 0 },
+                "AIP17P-256": { name: "iPhone 17 Pro 256GB", price: 1782000, mnp: 450000, chg: 450000, new: 450000, empExtra: 100000, famExtra: 0 },
+                "AIP17P-512": { name: "iPhone 17 Pro 512GB", price: 2090000, mnp: 450000, chg: 450000, new: 450000, empExtra: 100000, famExtra: 0 },
+                "AIP17P-1T": { name: "iPhone 17 Pro 1TB", price: 2387000, mnp: 450000, chg: 450000, new: 450000, empExtra: 100000, famExtra: 0 },
+                "AIPA-256": { name: "iPhone Air 256GB", price: 1584000, mnp: 450000, chg: 450000, new: 450000, empExtra: 100000, famExtra: 0 },
+                "AIPA-512": { name: "iPhone Air 512GB", price: 1881000, mnp: 450000, chg: 450000, new: 450000, empExtra: 100000, famExtra: 0 },
+                "AIPA-1T": { name: "iPhone Air 1TB", price: 2189000, mnp: 450000, chg: 450000, new: 450000, empExtra: 100000, famExtra: 0 },
+                "AIP17-256": { name: "iPhone 17 256GB", price: 1287000, mnp: 500000, chg: 450000, new: 450000, empExtra: 100000, famExtra: 0 },
+                "AIP17-512": { name: "iPhone 17 512GB", price: 1584000, mnp: 500000, chg: 450000, new: 450000, empExtra: 100000, famExtra: 0 },
+                "AIP17E-256": { name: "iPhone 17e 256GB", price: 990000, mnp: 450000, chg: 450000, new: 450000, empExtra: 100000, famExtra: 0 },
+                "AIP17E-512": { name: "iPhone 17e 512GB", price: 1287000, mnp: 450000, chg: 450000, new: 450000, empExtra: 100000, famExtra: 0 },
+                "AIP16PM-256": { name: "iPhone 16 Pro Max 256G", price: 1672000, mnp: 600000, chg: 600000, new: 600000, empExtra: 100000, famExtra: 0 },
+                "AIP16PM-512": { name: "iPhone 16 Pro Max 512G", price: 1980000, mnp: 600000, chg: 600000, new: 600000, empExtra: 100000, famExtra: 0 },
+                "AIP16PM-1T": { name: "iPhone 16 Pro Max 1T", price: 2277000, mnp: 600000, chg: 600000, new: 600000, empExtra: 100000, famExtra: 0 },
+                "AIP16P-128": { name: "iPhone 16 Pro 128G", price: 1320000, mnp: 600000, chg: 600000, new: 600000, empExtra: 100000, famExtra: 0 },
+                "AIP16P-256": { name: "iPhone 16 Pro 256G", price: 1474000, mnp: 600000, chg: 600000, new: 600000, empExtra: 100000, famExtra: 0 },
+                "AIP16P-512": { name: "iPhone 16 Pro 512G", price: 1771000, mnp: 600000, chg: 600000, new: 600000, empExtra: 100000, famExtra: 0 },
+                "AIP16P-1T": { name: "iPhone 16 Pro 1T", price: 2079000, mnp: 600000, chg: 600000, new: 600000, empExtra: 100000, famExtra: 0 },
+                "AIP16PS-128": { name: "iPhone 16 Plus 128G", price: 1122000, mnp: 600000, chg: 600000, new: 600000, empExtra: 100000, famExtra: 0 },
+                "AIP16PS-256": { name: "iPhone 16 Plus 256G", price: 1276000, mnp: 600000, chg: 600000, new: 600000, empExtra: 100000, famExtra: 0 },
+                "AIP16PS-512": { name: "iPhone 16 Plus 512G", price: 1573000, mnp: 600000, chg: 600000, new: 600000, empExtra: 100000, famExtra: 0 },
+                "AIP16-128": { name: "iPhone 16 128G", price: 1023000, mnp: 600000, chg: 600000, new: 600000, empExtra: 100000, famExtra: 0 },
+                "AIP16-256": { name: "iPhone 16 256G", price: 1177000, mnp: 600000, chg: 600000, new: 600000, empExtra: 100000, famExtra: 0 },
+                "AIP16-512": { name: "iPhone 16 512G", price: 1474000, mnp: 600000, chg: 600000, new: 600000, empExtra: 100000, famExtra: 0 },
+                "AIP16E-128": { name: "iPhone 16e 128G", price: 990000, mnp: 500000, chg: 500000, new: 500000, empExtra: 100000, famExtra: 0 },
+                "AIP16E-256": { name: "iPhone 16e 256G", price: 1133000, mnp: 500000, chg: 500000, new: 500000, empExtra: 100000, famExtra: 0 },
+                "AIP16E-512": { name: "iPhone 16e 512G", price: 1430000, mnp: 500000, chg: 500000, new: 500000, empExtra: 100000, famExtra: 0 },
+                "SM-A376NK": { name: "갤럭시A37 5G", price: 598400, mnp: 201000, chg: 201000, new: 201000, empExtra: 100000, famExtra: 50000 },
+                "SM-A366NK": { name: "갤럭시A36 5G", price: 499400, mnp: 201000, chg: 201000, new: 201000, empExtra: 100000, famExtra: 50000 },
+                "SM-A276K": { name: "갤럭시 Jump5", price: 545600, mnp: 201000, chg: 201000, new: 201000, empExtra: 100000, famExtra: 50000 },
+                "SM-M366K": { name: "갤럭시 Jump4", price: 449900, mnp: 201000, chg: 201000, new: 201000, empExtra: 100000, famExtra: 50000 },
+                "SM-M366K-MOM": { name: "맘편안폰S", price: 499400, mnp: 201000, chg: 201000, new: 201000, empExtra: 100000, famExtra: 50000 },
+                "SM-A175NK": { name: "갤럭시 A17", price: 319000, mnp: 201000, chg: 201000, new: 201000, empExtra: 50000, famExtra: 0 },
+                "SM-A175N0": { name: "갤럭시 A17_ONE", price: 319000, mnp: 201000, chg: 201000, new: 201000, empExtra: 50000, famExtra: 0 },
+                "XT2601-2K": { name: "Edge70", price: 550000, mnp: 201000, chg: 201000, new: 201000, empExtra: 100000, famExtra: 50000 },
+                "XT2429-2K": { name: "엣지50퓨전", price: 349800, mnp: 201000, chg: 201000, new: 201000, empExtra: 100000, famExtra: 50000 },
+                "XT2621-4K": { name: "moto g77", price: 396000, mnp: 201000, chg: 201000, new: 201000, empExtra: 50000, famExtra: 0 },
+                "XT2529-2K": { name: "moto G56 5G", price: 330000, mnp: 201000, chg: 201000, new: 201000, empExtra: 50000, famExtra: 0 },
+                "XT2363-3K": { name: "G34 5G", price: 211200, mnp: 201000, chg: 201000, new: 201000, empExtra: 50000, famExtra: 0 },
+                "MI-XM14TK": { name: "샤오미 14T", price: 599500, mnp: 201000, chg: 201000, new: 201000, empExtra: 100000, famExtra: 50000 },
+                "MI-RMN14K": { name: "레드미노트 14 5G", price: 319000, mnp: 201000, chg: 201000, new: 201000, empExtra: 50000, famExtra: 0 },
+                "MI-RM14CK": { name: "레드미 14C", price: 199100, mnp: 150000, chg: 150000, new: 150000, empExtra: 50000, famExtra: 0 },
+                "AT-M130K": { name: "시나모롤 키즈폰", price: 148500, mnp: 140000, chg: 140000, new: 140000, empExtra: 0, famExtra: 0 },
+                "SM-A175NK-KP": { name: "폼폼푸린 키즈폰", price: 349800, mnp: 201000, chg: 201000, new: 201000, empExtra: 50000, famExtra: 0 },
+                "Z2339K": { name: "클래식 폴더", price: 205700, mnp: 150000, chg: 150000, new: 150000, empExtra: 50000, famExtra: 0 }
+            },
+            plans: [
+                { code: "P130", name: "초이스130", price: 130000 },
+                { code: "P110", name: "초이스110", price: 110000 },
+                { code: "P90", name: "초이스90", price: 90000 },
+                { code: "P69", name: "베이직110GB (69요금제)", price: 69000 },
+                { code: "P45", name: "베이직7GB (45요금제)", price: 45000 }
+            ],
+            internet: [
+                { code: "NET100", name: "인터넷 슬림 100M", price: 22000 },
+                { code: "NET500", name: "인터넷 베이직 500M", price: 33000 },
+                { code: "NET1G", name: "인터넷 에센스 1G", price: 38500 },
+                { code: "NET2G5", name: "인터넷 프리미엄 2.5G", price: 44000 }
+            ],
+            iptv: [
+                { code: "TV_BASIC", name: "지니TV 베이직", price: 12100 },
+                { code: "TV_ALLG", name: "지니TV 모든G", price: 16500 }
+            ],
+            settop: [
+                { code: "ST_A", name: "지니셋탑A", price: 3300 },
+                { code: "ST_4", name: "지니셋탑4", price: 4400 }
+            ],
+            wifi: [
+                { code: "WF_BASIC", name: "GiGA WiFi 공유기", price: 1100 },
+                { code: "WF_7D", name: "GiGA WiFi 7D 공유기", price: 2200 }
+            ]
         };
 
         let curTab = 'employee';
@@ -349,7 +443,7 @@
 
         function fmt(n) { return new Intl.NumberFormat('ko-KR').format(Math.round(n)); }
 
-        // 로그인 실행 (마스터 바이패스 기능 유지: jaeng2 / 123qwe)
+        // 로그인 실행
         async function executeLogin() {
             const c = document.getElementById('auth-corp').value.trim();
             const p = document.getElementById('auth-pass').value.trim();
@@ -447,7 +541,7 @@
             if (target === 'emp') calcEmp(); else calcFam();
         }
 
-        // 임직원 휴대폰 연산 로직
+        // 임직원 연산
         function calcEmp() {
             const devKey = document.getElementById('emp-device').value;
             const planVal = Number(document.getElementById('emp-plan').value);
@@ -484,7 +578,7 @@
             renderOut(dev.name, `${joinLabel} / ${discLabel} / ${instLabel}`, dev.price, totalDisc, principal, Math.round(devMonthly), Math.round(planMonthly), finalWon);
         }
 
-        // 가족/지인 휴대폰 연산 로직
+        // 가족/지인 연산
         function calcFam() {
             const devKey = document.getElementById('fam-device').value;
             const planVal = Number(document.getElementById('fam-plan').value);
@@ -521,7 +615,7 @@
             renderOut(dev.name, `${joinLabel} / ${discLabel} / ${instLabel}`, dev.price, totalDisc, principal, Math.round(devMonthly), Math.round(planMonthly), finalWon);
         }
 
-        // 홈결합 연산 로직
+        // 홈결합 연산
         function calcHome() {
             const s = Number(document.getElementById('home-speed').value);
             const t = Number(document.getElementById('home-tv').value);
@@ -603,45 +697,57 @@
             }
         }
 
+        // 구글 시트 실시간 단가 조회 및 UI 동기화
         async function fetchPriceMaster() {
+            renderUI(); // 1단계: 내장 71종 즉시 렌더링 (빈칸 방지)
             try {
                 const res = await fetch(APPS_URL);
                 const json = await res.json();
-                if (json && json.success && json.data) {
-                    DB = json.data;
-                    document.getElementById('price-sync-status').innerHTML = '시트 71종 연동됨';
+                if (json && json.success && json.data && Object.keys(json.data.devices).length > 0) {
+                    DB = json.data; // 2단계: 시트 최신 단가로 실시간 동기화
+                    document.getElementById('price-sync-status').innerHTML = '시트 실시간 연동됨';
+                    renderUI();
                 }
             } catch (err) {
-                console.warn("단가 동기화 지연:", err);
+                console.warn("단가 실시간 동기화 대기:", err);
             }
-            renderUI();
         }
 
         function renderUI() {
             const dSel = document.getElementById('emp-device'), fdSel = document.getElementById('fam-device');
+            if (!dSel || !fdSel) return;
+
+            const prevD = dSel.value;
             dSel.innerHTML = ''; fdSel.innerHTML = '';
             for (let k in DB.devices) {
                 dSel.add(new Option(`${DB.devices[k].name} (출고가: ${fmt(DB.devices[k].price)}원)`, k));
                 fdSel.add(new Option(`${DB.devices[k].name} (출고가: ${fmt(DB.devices[k].price)}원)`, k));
             }
+            if (prevD && DB.devices[prevD]) {
+                dSel.value = prevD;
+                fdSel.value = prevD;
+            }
+
             const pSel = document.getElementById('emp-plan'), fpSel = document.getElementById('fam-plan');
-            pSel.innerHTML = ''; fpSel.innerHTML = '';
-            DB.plans.forEach((p, idx) => {
-                const opt1 = new Option(`${p.name} (월 ${fmt(p.price)}원)`, p.price);
-                const opt2 = new Option(`${p.name} (월 ${fmt(p.price)}원)`, p.price);
-                if (idx === 2) opt1.selected = true;
-                if (idx === 2) opt2.selected = true;
-                pSel.add(opt1);
-                fpSel.add(opt2);
-            });
+            if (pSel && fpSel && pSel.options.length === 0) {
+                DB.plans.forEach((p, idx) => {
+                    const opt1 = new Option(`${p.name} (월 ${fmt(p.price)}원)`, p.price);
+                    const opt2 = new Option(`${p.name} (월 ${fmt(p.price)}원)`, p.price);
+                    if (idx === 2) opt1.selected = true; // 초이스90 기본 선택
+                    if (idx === 2) opt2.selected = true;
+                    pSel.add(opt1);
+                    fpSel.add(opt2);
+                });
+            }
+
             const sSel = document.getElementById('home-speed');
-            sSel.innerHTML = ''; DB.internet.forEach(i => sSel.add(new Option(`${i.name} (월 ${fmt(i.price)}원)`, i.price)));
+            if (sSel && sSel.options.length === 0) DB.internet.forEach(i => sSel.add(new Option(`${i.name} (월 ${fmt(i.price)}원)`, i.price)));
             const tvSel = document.getElementById('home-tv');
-            tvSel.innerHTML = ''; DB.iptv.forEach(t => tvSel.add(new Option(`${t.name} (월 ${fmt(t.price)}원)`, t.price)));
+            if (tvSel && tvSel.options.length === 0) DB.iptv.forEach(t => tvSel.add(new Option(`${t.name} (월 ${fmt(t.price)}원)`, t.price)));
             const stSel = document.getElementById('home-settop');
-            stSel.innerHTML = ''; DB.settop.forEach(s => stSel.add(new Option(`${s.name} (월 ${fmt(s.price)}원)`, s.price)));
+            if (stSel && stSel.options.length === 0) DB.settop.forEach(s => stSel.add(new Option(`${s.name} (월 ${fmt(s.price)}원)`, s.price)));
             const wfSel = document.getElementById('home-wifi');
-            wfSel.innerHTML = ''; DB.wifi.forEach(w => wfSel.add(new Option(`${w.name} (월 ${fmt(w.price)}원)`, w.price)));
+            if (wfSel && wfSel.options.length === 0) DB.wifi.forEach(w => wfSel.add(new Option(`${w.name} (월 ${fmt(w.price)}원)`, w.price)));
 
             calcEmp();
         }
