@@ -206,8 +206,8 @@
                     <!-- Tab 3: 인터넷 + TV 특가 -->
                     <div id="content-home" class="tab-content space-y-4 hidden">
                         <div class="border-b pb-2">
-                            <h2 class="text-base font-bold text-slate-900">인터넷 + IPTV 결합 견적</h2>
-                            <p class="text-[11px] text-slate-500">속도별 기가 인터넷 + 지니TV 결합 패키지</p>
+                            <h2 class="text-base font-bold text-slate-900">인터넷 + IPTV 패키지 견적</h2>
+                            <p class="text-[11px] text-slate-500">인터넷, IPTV, 셋톱박스, 와이파이 기본 월정료 합산</p>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">1. 인터넷 속도 선택</label>
@@ -278,7 +278,7 @@
                             </div>
                         </div>
 
-                        <!-- 유선(인터넷+TV) 내역 -->
+                        <!-- 유선(인터넷+TV) 내역 (결합할인 완전 삭제) -->
                         <div id="panel-home" class="space-y-2 text-xs hidden">
                             <div class="flex justify-between text-slate-300">
                                 <span>선택 패키지</span>
@@ -286,24 +286,21 @@
                             </div>
                             <div class="flex justify-between text-slate-300">
                                 <span>약정 조건</span>
-                                <span class="text-slate-200 text-right">3년 약정 결합 기준</span>
+                                <span class="text-slate-200 text-right">3년 약정 기준</span>
                             </div>
                             
-                            <!-- 시트 H열 연동 가입 추가지원금 단독 표기 -->
-                            <div class="flex justify-between text-emerald-400 font-bold bg-emerald-950/40 p-2 rounded-lg border border-emerald-800/50">
-                                <span>가입 추가지원금 (사은혜택)</span>
-                                <span id="home-out-gift">0 원</span>
+                            <!-- 가입 추가지원금 단독 표기 -->
+                            <div class="flex justify-between text-emerald-400 font-bold bg-emerald-950/40 p-2.5 rounded-lg border border-emerald-800/50">
+                                <span>가입 추가지원금 (별도 지급)</span>
+                                <span id="home-out-gift">+ 400,000 원 지급</span>
                             </div>
 
-                            <!-- 세부 요금 합산 명세 -->
-                            <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1 my-2">
-                                <div class="flex justify-between"><span>인터넷 요금:</span><span id="home-detail-net" class="text-slate-200">0 원</span></div>
+                            <!-- 세부 요금 합산 명세 (결합할인 없이 4종 순수 합산) -->
+                            <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1.5 my-2">
+                                <div class="flex justify-between"><span>인터넷 기본요금:</span><span id="home-detail-net" class="text-slate-200">0 원</span></div>
                                 <div class="flex justify-between"><span>IPTV 요금:</span><span id="home-detail-tv" class="text-slate-200">0 원</span></div>
-                                <div class="flex justify-between"><span>셋톱박스 요금:</span><span id="home-detail-st" class="text-slate-200">0 원</span></div>
-                                <div class="flex justify-between"><span>와이파이 요금:</span><span id="home-detail-wf" class="text-slate-200">0 원</span></div>
-                                <div class="flex justify-between text-red-400 pt-1 border-t border-slate-800 font-semibold">
-                                    <span>결합할인 혜택:</span><span>- 11,000 원</span>
-                                </div>
+                                <div class="flex justify-between"><span>셋톱박스 임대료:</span><span id="home-detail-st" class="text-slate-200">0 원</span></div>
+                                <div class="flex justify-between"><span>와이파이 공유기료:</span><span id="home-detail-wf" class="text-slate-200">0 원</span></div>
                             </div>
                         </div>
 
@@ -417,10 +414,10 @@
                 { code: "P45", name: "베이직7GB (45요금제)", price: 45000 }
             ],
             internet: [
-                { code: "NET100", name: "인터넷 슬림 100M", price: 22000, empExtra: 0, famExtra: 0 },
-                { code: "NET500", name: "인터넷 베이직 500M", price: 33000, empExtra: 0, famExtra: 0 },
-                { code: "NET1G", name: "인터넷 에센스 1G", price: 38500, empExtra: 0, famExtra: 0 },
-                { code: "NET2G5", name: "인터넷 프리미엄 2.5G", price: 44000, empExtra: 0, famExtra: 0 }
+                { code: "NET100", name: "인터넷 슬림 100M", price: 22000, empExtra: 400000, famExtra: 300000 },
+                { code: "NET500", name: "인터넷 베이직 500M", price: 33000, empExtra: 400000, famExtra: 300000 },
+                { code: "NET1G", name: "인터넷 에센스 1G", price: 38500, empExtra: 400000, famExtra: 300000 },
+                { code: "NET2G5", name: "인터넷 프리미엄 2.5G", price: 44000, empExtra: 400000, famExtra: 300000 }
             ],
             iptv: [
                 { code: "TV_BASIC", name: "지니TV 베이직", price: 12100 },
@@ -489,7 +486,7 @@
             if (t === 'home') {
                 document.getElementById('panel-mobile').classList.add('hidden');
                 document.getElementById('panel-home').classList.remove('hidden');
-                document.getElementById('final-label').innerText = '최종 월 이용요금 (결합할인 후)';
+                document.getElementById('final-label').innerText = '최종 월 납부액';
             } else {
                 document.getElementById('panel-mobile').classList.remove('hidden');
                 document.getElementById('panel-home').classList.add('hidden');
@@ -591,27 +588,26 @@
             if (mp) mp.innerText = `${fmt(finalP)} 원/월`;
         }
 
-        // 인터넷+TV 결합 연산 (시트 H열 임직원_추가지원금 100% 동기화)
+        // 인터넷+TV 결합 연산 (결합할인 완전 제거: 4종 순수 합산)
         function calcHome() {
-            const netIdx = document.getElementById('home-speed').selectedIndex;
-            const netObj = DB.internet[netIdx] || { price: 0, name: "-", empExtra: 0 };
+            const netIdx = document.getElementById('home-speed').selectedIndex >= 0 ? document.getElementById('home-speed').selectedIndex : 0;
+            const netObj = DB.internet[netIdx] || { price: 22000, name: "인터넷 슬림 100M", empExtra: 400000 };
             
             const netPrice = Number(netObj.price || 0);
             const tvPrice = Number(document.getElementById('home-tv').value || 0);
             const stPrice = Number(document.getElementById('home-settop').value || 0);
             const wfPrice = Number(document.getElementById('home-wifi').value || 0);
 
-            // 시트 Price_Policy_Master H열에 입력된 추가지원금 값
-            const giftMoney = Number(netObj.empExtra || 0);
+            // 가입 추가지원금 (별도 지급)
+            const giftMoney = Number(netObj.empExtra !== undefined ? netObj.empExtra : 400000);
 
-            const rawSum = netPrice + tvPrice + stPrice + wfPrice;
-            const comboDiscount = 11000;
-            finalWon = rawSum - comboDiscount;
+            // 결합할인 없이 4종 요금 단순 합산 = 최종 월 납부액
+            finalWon = netPrice + tvPrice + stPrice + wfPrice;
 
             const tvName = document.getElementById('home-tv').options[document.getElementById('home-tv').selectedIndex]?.text.split(' (')[0] || '';
             const pkgTitle = `${netObj.name} + ${tvName}`;
 
-            detailText = `[홈결합] ${pkgTitle} | 3년약정 | 추가지원: ${fmt(giftMoney)}원 | 월 ${fmt(finalWon)}원`;
+            detailText = `[인터넷+TV] ${pkgTitle} | 3년약정 | 추가지원: ${fmt(giftMoney)}원 | 월 ${fmt(finalWon)}원`;
 
             document.getElementById('home-out-name').innerText = pkgTitle;
             document.getElementById('home-out-gift').innerText = `+ ${fmt(giftMoney)} 원 지급`;
@@ -670,9 +666,8 @@
             } catch (e) { alert("전송 중 오류가 발생했습니다."); } finally { btn.innerText = "공식 견적서 발송 및 상담 신청"; btn.disabled = false; }
         }
 
-        // ==================== JSONP 실시간 동기화 콜백 ====================
         window.handlePriceSync = function(response) {
-            if (response && response.success && response.data && Object.keys(response.data.devices).length > 0) {
+            if (response && response.success && response.data) {
                 DB = response.data;
                 renderUI();
                 const badge = document.getElementById('price-sync-status');
@@ -713,7 +708,7 @@
 
             const sSel = document.getElementById('home-speed');
             if (sSel) {
-                const prevSpeedIdx = sSel.selectedIndex >= 0 ? sSel.selectedIndex : 1;
+                const prevSpeedIdx = sSel.selectedIndex >= 0 ? sSel.selectedIndex : 0;
                 sSel.innerHTML = '';
                 DB.internet.forEach((i, idx) => {
                     const opt = new Option(`${i.name} (월 ${fmt(i.price)}원)`, idx);
