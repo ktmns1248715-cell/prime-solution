@@ -99,16 +99,24 @@
     <!-- 3. 메인 콘텐츠 -->
     <div id="main-content">
         <header class="bg-white border-b sticky top-0 z-40 shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 h-14 sm:h-16 flex items-center justify-between">
-                <div class="flex items-center space-x-2">
+            <div class="max-w-7xl mx-auto px-3 sm:px-4 h-14 sm:h-16 flex items-center justify-between">
+                <div class="flex items-center space-x-1.5 sm:space-x-2">
                     <span class="bg-red-600 text-white font-extrabold text-[10px] sm:text-xs px-2 py-0.5 rounded">KT M&S</span>
-                    <span class="text-base sm:text-lg font-extrabold tracking-tight">Prime Benefit <span class="text-red-600">Solution</span></span>
+                    <span class="text-sm sm:text-lg font-extrabold tracking-tight">Prime Benefit <span class="text-red-600">Solution</span></span>
                 </div>
-                <div class="flex items-center space-x-2">
-                    <span id="price-sync-status" class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center">
-                        <i class="fa-solid fa-cloud-check mr-1 text-emerald-500"></i>시트 실시간 연동중
+                <div class="flex items-center space-x-1.5 sm:space-x-2">
+                    <!-- 담당센터 직통 전화 연결 버튼 -->
+                    <a href="tel:010-8290-9971" class="text-[11px] font-bold text-white bg-slate-900 hover:bg-slate-800 border border-slate-700 px-2.5 py-1 rounded-full flex items-center transition shadow-sm">
+                        <i class="fa-solid fa-phone-volume mr-1 text-emerald-400"></i>담당센터 연결
+                    </a>
+                    <!-- 카카오톡 실시간 상담 버튼 -->
+                    <a href="http://pf.kakao.com/_xaXbrn/chat" target="_blank" rel="noopener noreferrer" class="text-[11px] font-bold text-slate-900 bg-[#FEE500] hover:bg-[#FDD835] border border-[#E5CE00] px-2.5 py-1 rounded-full flex items-center transition shadow-sm">
+                        <i class="fa-solid fa-comment mr-1 text-slate-900"></i>카톡 상담
+                    </a>
+                    <span id="price-sync-status" class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full hidden md:flex items-center">
+                        <i class="fa-solid fa-cloud-check mr-1 text-emerald-500"></i>시트 실시간 연동됨
                     </span>
-                    <span id="logged-corp-badge" class="text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-full">인증: -</span>
+                    <span id="logged-corp-badge" class="text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-full hidden sm:inline-block">인증: -</span>
                     <button type="button" onclick="logout()" class="text-xs text-slate-400 hover:text-slate-700 p-1">로그아웃</button>
                 </div>
             </div>
@@ -278,7 +286,7 @@
                             </div>
                         </div>
 
-                        <!-- 유선(인터넷+TV) 내역 (결합할인 완전 삭제) -->
+                        <!-- 유선(인터넷+TV) 내역 -->
                         <div id="panel-home" class="space-y-2 text-xs hidden">
                             <div class="flex justify-between text-slate-300">
                                 <span>선택 패키지</span>
@@ -289,13 +297,11 @@
                                 <span class="text-slate-200 text-right">3년 약정 기준</span>
                             </div>
                             
-                            <!-- 가입 추가지원금 단독 표기 -->
                             <div class="flex justify-between text-emerald-400 font-bold bg-emerald-950/40 p-2.5 rounded-lg border border-emerald-800/50">
                                 <span>가입 추가지원금 (별도 지급)</span>
                                 <span id="home-out-gift">+ 400,000 원 지급</span>
                             </div>
 
-                            <!-- 세부 요금 합산 명세 (결합할인 없이 4종 순수 합산) -->
                             <div class="bg-slate-950/70 p-3 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1.5 my-2">
                                 <div class="flex justify-between"><span>인터넷 기본요금:</span><span id="home-detail-net" class="text-slate-200">0 원</span></div>
                                 <div class="flex justify-between"><span>IPTV 요금:</span><span id="home-detail-tv" class="text-slate-200">0 원</span></div>
@@ -588,7 +594,6 @@
             if (mp) mp.innerText = `${fmt(finalP)} 원/월`;
         }
 
-        // 인터넷+TV 결합 연산 (결합할인 완전 제거: 4종 순수 합산)
         function calcHome() {
             const netIdx = document.getElementById('home-speed').selectedIndex >= 0 ? document.getElementById('home-speed').selectedIndex : 0;
             const netObj = DB.internet[netIdx] || { price: 22000, name: "인터넷 슬림 100M", empExtra: 400000 };
@@ -598,10 +603,8 @@
             const stPrice = Number(document.getElementById('home-settop').value || 0);
             const wfPrice = Number(document.getElementById('home-wifi').value || 0);
 
-            // 가입 추가지원금 (별도 지급)
             const giftMoney = Number(netObj.empExtra !== undefined ? netObj.empExtra : 400000);
 
-            // 결합할인 없이 4종 요금 단순 합산 = 최종 월 납부액
             finalWon = netPrice + tvPrice + stPrice + wfPrice;
 
             const tvName = document.getElementById('home-tv').options[document.getElementById('home-tv').selectedIndex]?.text.split(' (')[0] || '';
