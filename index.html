@@ -3,314 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>M&S Prime Benefit Solution | 법인 임직원 폐쇄몰 견적 시스템</title>
-    <!-- Tailwind CSS CDN -->
+    <title>M&S Prime Benefit Solution | 법인 폐쇄몰</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
-        body { 
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800&display=swap');
+        body { font-family: 'Pretendard', sans-serif; -webkit-user-select: none; user-select: none; }
         @media print { body { display: none !important; } }
-        .secure-blur { filter: blur(25px) !important; transition: filter 0.1s ease; }
-        #capture-curtain {
-            display: none; position: fixed; inset: 0; background: #0f172a;
-            z-index: 9999; color: white; align-items: center; justify-content: center; text-align: center;
-        }
-        @media (max-width: 1023px) {
-            .mobile-bottom-pad { padding-bottom: 90px; }
-        }
+        .secure-blur { filter: blur(25px) !important; }
+        @media (max-width: 1023px) { .mobile-pad { padding-bottom: 90px; } }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased mobile-bottom-pad" oncontextmenu="return false;" ondragstart="return false;" onselectstart="return false;">
+<body class="bg-slate-50 text-slate-800 antialiased mobile-pad" oncontextmenu="return false;">
 
-    <!-- 캡처 방지 가림막 (pointer-events-none 적용으로 클릭 먹통 원천 방지) -->
-    <div id="capture-curtain" class="flex flex-col space-y-4 p-6 pointer-events-none">
-        <i class="fa-solid fa-shield-halved text-5xl text-red-500"></i>
-        <h2 class="text-xl sm:text-2xl font-bold">보안 정책상 화면 캡처 및 무단 복사가 금지되어 있습니다.</h2>
-        <p class="text-slate-400 text-xs sm:text-sm">화면 내부를 다시 터치(클릭)하십시오.</p>
-    </div>
-
-    <!-- ==================== 1. 인증 게이트 ==================== -->
-    <div id="auth-gate" class="fixed inset-0 bg-slate-950/90 z-50 flex items-center justify-center p-4 backdrop-blur-md">
-        <div class="bg-white max-w-md w-full rounded-2xl shadow-2xl border border-slate-200 p-6 sm:p-8 relative z-10">
+    <!-- 1. 인증 게이트 -->
+    <div id="auth-gate" class="fixed inset-0 bg-slate-950/95 z-50 flex items-center justify-center p-4">
+        <div class="bg-white max-w-md w-full rounded-2xl shadow-2xl p-6 sm:p-8">
             <div class="text-center mb-6">
                 <span class="bg-red-600 text-white font-extrabold text-xs px-2.5 py-1 rounded">KT M&S</span>
-                <h2 class="text-2xl font-extrabold text-slate-900 mt-3">법인 제휴 임직원 인증</h2>
-                <p class="text-xs text-slate-500 mt-1">발급받은 제휴 법인명과 전용 보안 PASS를 입력하세요.</p>
+                <h2 class="text-2xl font-extrabold text-slate-900 mt-2">법인 제휴 임직원 인증</h2>
+                <p class="text-xs text-slate-500 mt-1">제휴 법인명과 발급받은 보안 PASS를 입력하세요.</p>
             </div>
 
-            <form id="auth-form" onsubmit="handleAuthLogin(event)" class="space-y-4">
+            <div class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">법인(회사)명 / 마스터 ID</label>
-                    <div class="relative">
-                        <i class="fa-solid fa-building absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
-                        <input type="text" id="auth-corp-name" required placeholder="법인명 또는 마스터 ID 입력" class="w-full bg-slate-50 border border-slate-300 rounded-lg pl-10 pr-3 py-3 text-sm focus:ring-2 focus:ring-red-500 focus:outline-none">
-                    </div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">법인명 / 마스터 ID</label>
+                    <input type="text" id="auth-corp" placeholder="법인명 또는 마스터 ID (jaeng2)" class="w-full bg-slate-50 border rounded-lg p-3 text-sm focus:ring-2 focus:ring-red-500 outline-none">
                 </div>
-
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">제휴 보안 PASS / 비밀번호</label>
-                    <div class="relative">
-                        <i class="fa-solid fa-key absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
-                        <input type="password" id="auth-pass" required placeholder="보안 PASS 입력" class="w-full bg-slate-50 border border-slate-300 rounded-lg pl-10 pr-3 py-3 text-sm focus:ring-2 focus:ring-red-500 focus:outline-none">
-                    </div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">보안 PASS / 비밀번호</label>
+                    <input type="password" id="auth-pass" placeholder="보안 PASS 입력 (123qwe)" class="w-full bg-slate-50 border rounded-lg p-3 text-sm focus:ring-2 focus:ring-red-500 outline-none">
                 </div>
 
-                <div id="auth-error-msg" class="text-xs text-red-600 font-semibold hidden flex items-center">
-                    <i class="fa-solid fa-circle-exclamation mr-1.5"></i>
-                    <span id="auth-error-text">인증 정보가 일치하지 않거나 만료된 계정입니다.</span>
+                <div id="auth-err" class="text-xs text-red-600 font-semibold hidden">
+                    <i class="fa-solid fa-circle-exclamation mr-1"></i>인증 정보가 일치하지 않습니다.
                 </div>
 
-                <button type="submit" id="auth-submit-btn" class="w-full py-3.5 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-bold rounded-xl transition text-sm shadow-md flex items-center justify-center cursor-pointer">
-                    <span>폐쇄몰 입장하기</span>
+                <button type="button" onclick="executeLogin()" id="btn-login" class="w-full py-3.5 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-bold rounded-xl text-sm shadow-md transition">
+                    폐쇄몰 입장하기
                 </button>
-            </form>
+            </div>
 
-            <div class="mt-6 pt-5 border-t border-slate-100 text-center">
-                <p class="text-xs text-slate-500">아직 제휴 전이거나 접속 코드가 없으신가요?</p>
-                <button type="button" onclick="toggleApplyModal(true)" class="mt-2 text-xs font-bold text-slate-900 hover:text-red-600 underline cursor-pointer p-1">
-                    신규 법인 제휴 및 접속 권한 신청하기
+            <div class="mt-5 pt-4 border-t text-center">
+                <button type="button" onclick="toggleModal(true)" class="text-xs font-bold text-slate-700 hover:text-red-600 underline">
+                    신규 법인 제휴 및 PASS 발급 신청
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ==================== 2. 신규 법인 신청 모달 ==================== -->
+    <!-- 2. 신규 법인 신청 모달 -->
     <div id="apply-modal" class="fixed inset-0 bg-black/80 z-[60] hidden items-center justify-center p-4">
-        <div class="bg-white max-w-lg w-full rounded-2xl shadow-2xl p-6 sm:p-8 space-y-4 max-h-[90vh] overflow-y-auto relative z-10">
+        <div class="bg-white max-w-lg w-full rounded-2xl shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="text-base sm:text-lg font-bold text-slate-900">신규 법인 제휴 및 PASS 발급 신청</h3>
-                <button type="button" onclick="toggleApplyModal(false)" class="text-slate-400 hover:text-slate-600 text-lg cursor-pointer p-2">
+                <h3 class="text-base sm:text-lg font-bold text-slate-900">신규 법인 제휴 신청</h3>
+                <button type="button" onclick="toggleModal(false)" class="text-slate-400 hover:text-slate-600 text-lg p-1">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <p class="text-xs text-slate-500">법인 정보를 등록해주시면 전담 컨설턴트 검토 후 접속 PASS가 발급됩니다.</p>
-            
-            <form onsubmit="handleApplySubmit(event)" class="space-y-3">
+            <div class="space-y-3">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">신청 법인(기업)명</label>
-                    <input type="text" id="req-corp" required placeholder="예: KT CS" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">신청 법인명</label>
+                    <input type="text" id="req-corp" placeholder="예: KT CS" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none">
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">담당자 성함</label>
-                        <input type="text" id="req-name" required placeholder="홍길동" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none">
+                        <input type="text" id="req-name" placeholder="홍길동" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">담당자 연락처</label>
-                        <input type="tel" id="req-phone" required placeholder="010-0000-0000" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none">
+                        <input type="tel" id="req-phone" placeholder="010-0000-0000" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none">
                     </div>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">회사 이메일</label>
-                    <input type="email" id="req-email" required placeholder="example@company.com" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs focus:ring-2 focus:ring-red-500 focus:outline-none">
+                    <input type="email" id="req-email" placeholder="example@company.com" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none">
                 </div>
-                <button type="submit" id="req-submit-btn" class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 active:bg-black text-white font-bold rounded-xl text-xs sm:text-sm mt-2 cursor-pointer shadow-md">
+                <button type="button" onclick="submitApply()" id="btn-apply" class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs shadow-md">
                     제휴 승인 요청 등록
                 </button>
-            </form>
+            </div>
         </div>
     </div>
 
-    <!-- ==================== 3. 메인 복지몰 콘텐츠 ==================== -->
-    <div id="main-content" class="filter">
+    <!-- 3. 메인 콘텐츠 -->
+    <div id="main-content">
         <!-- Header -->
-        <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between">
-                <div class="flex items-center space-x-2 sm:space-x-3">
-                    <span class="bg-red-600 text-white font-extrabold text-[10px] sm:text-xs px-2 sm:px-2.5 py-0.5 sm:py-1 rounded">KT M&S</span>
-                    <span class="text-base sm:text-xl font-extrabold tracking-tight text-slate-900">Prime Benefit <span class="text-red-600">Solution</span></span>
+        <header class="bg-white border-b sticky top-0 z-40 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 h-14 sm:h-16 flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <span class="bg-red-600 text-white font-extrabold text-[10px] sm:text-xs px-2 py-0.5 rounded">KT M&S</span>
+                    <span class="text-base sm:text-lg font-extrabold tracking-tight">Prime Benefit <span class="text-red-600">Solution</span></span>
                 </div>
-                <div class="flex items-center space-x-2 sm:space-x-3">
-                    <span id="price-sync-status" class="text-[10px] sm:text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full flex items-center hidden sm:flex">
-                        <i class="fa-solid fa-cloud-check mr-1 text-emerald-500"></i>시트 실시간 연동됨
-                    </span>
-                    <span id="logged-corp-badge" class="text-[11px] sm:text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full max-w-[120px] sm:max-w-none truncate">인증 법인: -</span>
-                    <button onclick="handleLogout()" class="text-xs text-slate-400 hover:text-slate-700 font-semibold p-1"><i class="fa-solid fa-right-from-bracket mr-1"></i><span class="hidden sm:inline">로그아웃</span></button>
+                <div class="flex items-center space-x-2">
+                    <span id="price-sync-status" class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full hidden sm:inline-block">시트 연동됨</span>
+                    <span id="logged-corp-badge" class="text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2.5 py-0.5 rounded-full">인증 법인: -</span>
+                    <button type="button" onclick="logout()" class="text-xs text-slate-400 hover:text-slate-700 p-1">로그아웃</button>
                 </div>
             </div>
         </header>
 
         <!-- Main Workspace -->
-        <main class="max-w-6xl mx-auto px-3 sm:px-4 py-5 sm:py-10">
-            <!-- 탭 네비게이션 -->
-            <div class="grid grid-cols-3 gap-1 sm:gap-1.5 border border-slate-200 mb-6 sm:mb-8 bg-white p-1 sm:p-1.5 rounded-xl shadow-sm">
-                <button onclick="switchTab('employee')" id="tab-employee" class="py-2.5 sm:py-3.5 px-1 sm:px-4 text-center font-bold text-xs sm:text-base rounded-lg transition-all text-white bg-red-600 shadow">
-                    <i class="fa-solid fa-user-tie sm:mr-2 block sm:inline text-sm mb-1 sm:mb-0"></i>임직원 휴대폰
-                </button>
-                <button onclick="switchTab('family')" id="tab-family" class="py-2.5 sm:py-3.5 px-1 sm:px-4 text-center font-semibold text-xs sm:text-base text-slate-500 hover:text-slate-900 rounded-lg transition-all">
-                    <i class="fa-solid fa-users sm:mr-2 block sm:inline text-sm mb-1 sm:mb-0"></i>가족·지인 특가
-                </button>
-                <button onclick="switchTab('home')" id="tab-home" class="py-2.5 sm:py-3.5 px-1 sm:px-4 text-center font-semibold text-xs sm:text-base text-slate-500 hover:text-slate-900 rounded-lg transition-all">
-                    <i class="fa-solid fa-tv sm:mr-2 block sm:inline text-sm mb-1 sm:mb-0"></i>인터넷+TV
-                </button>
+        <main class="max-w-6xl mx-auto px-3 sm:px-4 py-5 sm:py-8">
+            <!-- 탭 전환 -->
+            <div class="grid grid-cols-3 gap-1 border bg-white p-1 rounded-xl shadow-sm mb-6">
+                <button type="button" onclick="switchTab('employee')" id="tab-employee" class="py-2.5 sm:py-3 text-center font-bold text-xs sm:text-sm rounded-lg bg-red-600 text-white shadow">임직원 휴대폰</button>
+                <button type="button" onclick="switchTab('family')" id="tab-family" class="py-2.5 sm:py-3 text-center font-semibold text-xs sm:text-sm rounded-lg text-slate-500 hover:text-slate-900">가족·지인 특가</button>
+                <button type="button" onclick="switchTab('home')" id="tab-home" class="py-2.5 sm:py-3 text-center font-semibold text-xs sm:text-sm rounded-lg text-slate-500 hover:text-slate-900">인터넷+TV</button>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
-                <!-- 좌측 옵션 선택 & 신청 폼 -->
-                <div class="lg:col-span-7 bg-white p-4 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-5 sm:space-y-6">
-                    
-                    <!-- Tab 1: 임직원 휴대폰 -->
-                    <div id="content-employee" class="tab-content space-y-4 sm:space-y-5">
-                        <div class="border-b border-slate-100 pb-3">
-                            <h2 class="text-base sm:text-lg font-bold text-slate-900">임직원 본인 전용 특가 견적</h2>
-                            <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5">구글 시트 마스터 단가표 기반 실시간 정책 연동</p>
-                        </div>
-
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- 좌측 설정 영역 -->
+                <div class="lg:col-span-7 bg-white p-5 sm:p-7 rounded-2xl border shadow-sm space-y-5">
+                    <!-- Tab 1: 임직원 -->
+                    <div id="content-employee" class="tab-content space-y-4">
+                        <h2 class="text-base font-bold text-slate-900 border-b pb-2">임직원 본인 전용 견적</h2>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">1. 단말기 모델 선택</label>
-                            <select id="emp-device" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-red-500 focus:outline-none" onchange="calculateEmployee()">
-                            </select>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">단말기 선택</label>
+                            <select id="emp-device" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none" onchange="calcEmp()"></select>
                         </div>
-
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">2. 가입 유형 선택</label>
-                            <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
-                                <button type="button" onclick="setEmpJoinType('mnp')" id="emp-type-mnp" class="py-2.5 px-1 sm:px-2 border-2 border-red-600 bg-red-50 text-red-700 font-bold text-[11px] sm:text-xs rounded-lg">번호이동<span class="hidden sm:inline"> (타사➔KT)</span></button>
-                                <button type="button" onclick="setEmpJoinType('chg')" id="emp-type-chg" class="py-2.5 px-1 sm:px-2 border border-slate-300 bg-white text-slate-600 font-bold text-[11px] sm:text-xs rounded-lg">기기변경<span class="hidden sm:inline"> (KT유지)</span></button>
-                                <button type="button" onclick="setEmpJoinType('new')" id="emp-type-new" class="py-2.5 px-1 sm:px-2 border border-slate-300 bg-white text-slate-600 font-bold text-[11px] sm:text-xs rounded-lg">신규가입<span class="hidden sm:inline"> (010신규)</span></button>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">가입 유형</label>
+                            <div class="grid grid-cols-3 gap-1.5">
+                                <button type="button" onclick="setJoin('emp','mnp')" id="emp-type-mnp" class="py-2 border-2 border-red-600 bg-red-50 text-red-700 font-bold text-xs rounded-lg">번호이동</button>
+                                <button type="button" onclick="setJoin('emp','chg')" id="emp-type-chg" class="py-2 border bg-white text-slate-600 font-bold text-xs rounded-lg">기기변경</button>
+                                <button type="button" onclick="setJoin('emp','new')" id="emp-type-new" class="py-2 border bg-white text-slate-600 font-bold text-xs rounded-lg">신규가입</button>
                             </div>
                         </div>
-
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">3. 요금제 선택</label>
-                            <select id="emp-plan" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-red-500 focus:outline-none" onchange="calculateEmployee()">
-                            </select>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">요금제 선택</label>
+                            <select id="emp-plan" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none" onchange="calcEmp()"></select>
                         </div>
                     </div>
 
-                    <!-- Tab 2: 가족/지인 휴대폰 -->
-                    <div id="content-family" class="tab-content space-y-4 sm:space-y-5 hidden">
-                        <div class="border-b border-slate-100 pb-3">
-                            <h2 class="text-base sm:text-lg font-bold text-slate-900">가족 및 지인 추천 특가 견적</h2>
-                            <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5">임직원 제휴 코드 적용 + 구글 시트 추천 단가 실시간 반영</p>
-                        </div>
-
+                    <!-- Tab 2: 가족 -->
+                    <div id="content-family" class="tab-content space-y-4 hidden">
+                        <h2 class="text-base font-bold text-slate-900 border-b pb-2">가족·지인 추천 견적</h2>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">1. 단말기 모델 선택</label>
-                            <select id="fam-device" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-red-500 focus:outline-none" onchange="calculateFamily()">
-                            </select>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">단말기 선택</label>
+                            <select id="fam-device" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none" onchange="calcFam()"></select>
                         </div>
-
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">2. 가입 유형 선택</label>
-                            <div class="grid grid-cols-3 gap-1.5 sm:gap-2">
-                                <button type="button" onclick="setFamJoinType('mnp')" id="fam-type-mnp" class="py-2.5 px-1 sm:px-2 border-2 border-red-600 bg-red-50 text-red-700 font-bold text-[11px] sm:text-xs rounded-lg">번호이동<span class="hidden sm:inline"> (타사➔KT)</span></button>
-                                <button type="button" onclick="setFamJoinType('chg')" id="fam-type-chg" class="py-2.5 px-1 sm:px-2 border border-slate-300 bg-white text-slate-600 font-bold text-[11px] sm:text-xs rounded-lg">기기변경<span class="hidden sm:inline"> (KT유지)</span></button>
-                                <button type="button" onclick="setFamJoinType('new')" id="fam-type-new" class="py-2.5 px-1 sm:px-2 border border-slate-300 bg-white text-slate-600 font-bold text-[11px] sm:text-xs rounded-lg">신규가입<span class="hidden sm:inline"> (010신규)</span></button>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">가입 유형</label>
+                            <div class="grid grid-cols-3 gap-1.5">
+                                <button type="button" onclick="setJoin('fam','mnp')" id="fam-type-mnp" class="py-2 border-2 border-red-600 bg-red-50 text-red-700 font-bold text-xs rounded-lg">번호이동</button>
+                                <button type="button" onclick="setJoin('fam','chg')" id="fam-type-chg" class="py-2 border bg-white text-slate-600 font-bold text-xs rounded-lg">기기변경</button>
+                                <button type="button" onclick="setJoin('fam','new')" id="fam-type-new" class="py-2 border bg-white text-slate-600 font-bold text-xs rounded-lg">신규가입</button>
                             </div>
                         </div>
-
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">3. 요금제 선택</label>
-                            <select id="fam-plan" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-red-500 focus:outline-none" onchange="calculateFamily()">
-                            </select>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">요금제 선택</label>
+                            <select id="fam-plan" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none" onchange="calcFam()"></select>
                         </div>
                     </div>
 
-                    <!-- Tab 3: 인터넷 + TV 특가 -->
-                    <div id="content-home" class="tab-content space-y-4 sm:space-y-5 hidden">
-                        <div class="border-b border-slate-100 pb-3">
-                            <h2 class="text-base sm:text-lg font-bold text-slate-900">인터넷 + IPTV 결합 상품 견적</h2>
-                            <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5">속도별 인터넷 + 지니TV 라인업 + 셋톱박스 + WiFi 공유기 모듈 조합</p>
-                        </div>
-
+                    <!-- Tab 3: 홈결합 -->
+                    <div id="content-home" class="tab-content space-y-4 hidden">
+                        <h2 class="text-base font-bold text-slate-900 border-b pb-2">인터넷 + IPTV 결합 견적</h2>
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">1. 인터넷 속도</label>
-                            <select id="home-speed" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-red-500 focus:outline-none" onchange="calculateHome()">
-                            </select>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">인터넷 속도</label>
+                            <select id="home-speed" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none" onchange="calcHome()"></select>
                         </div>
-
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">2. IPTV 상품 종류</label>
-                            <select id="home-tv" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-red-500 focus:outline-none" onchange="calculateHome()">
-                            </select>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">IPTV 상품</label>
+                            <select id="home-tv" class="w-full bg-slate-50 border rounded-lg p-2.5 text-xs outline-none" onchange="calcHome()"></select>
                         </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">3. 셋톱박스 모델</label>
-                            <select id="home-settop" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-red-500 focus:outline-none" onchange="calculateHome()">
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5">4. GiGA WiFi 공유기</label>
-                            <select id="home-wifi" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-red-500 focus:outline-none" onchange="calculateHome()">
-                            </select>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">셋톱박스</label>
+                                <select id="home-settop" class="w-full bg-slate-50 border rounded-lg p-2 text-xs outline-none" onchange="calcHome()"></select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">와이파이</label>
+                                <select id="home-wifi" class="w-full bg-slate-50 border rounded-lg p-2 text-xs outline-none" onchange="calcHome()"></select>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- 신청 접수 폼 -->
-                    <form id="lead-form" onsubmit="submitForm(event)" class="mt-6 pt-5 border-t border-slate-200 space-y-3">
-                        <h3 class="text-xs sm:text-sm font-bold text-slate-800 flex items-center">
-                            <i class="fa-solid fa-file-signature text-red-600 mr-1.5"></i>상세 견적서 수신 및 전문 컨설팅 신청
-                        </h3>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                            <input type="text" id="cust-name" required placeholder="신청자 성함" class="bg-slate-50 border border-slate-300 rounded-lg p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-red-500 focus:outline-none">
-                            <input type="tel" id="cust-phone" required placeholder="연락처 (010-0000-0000)" class="bg-slate-50 border border-slate-300 rounded-lg p-2.5 sm:p-3 text-xs sm:text-sm focus:ring-2 focus:ring-red-500 focus:outline-none">
+                    <!-- 신청 폼 -->
+                    <div class="mt-6 pt-5 border-t space-y-3">
+                        <h3 class="text-xs font-bold text-slate-800"><i class="fa-solid fa-file-signature text-red-600 mr-1"></i>상담 및 견적서 신청</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <input type="text" id="cust-name" placeholder="신청자 성함" class="bg-slate-50 border rounded-lg p-2.5 text-xs outline-none">
+                            <input type="tel" id="cust-phone" placeholder="연락처 (010-0000-0000)" class="bg-slate-50 border rounded-lg p-2.5 text-xs outline-none">
                         </div>
-                        <button type="submit" id="lead-submit-btn" class="w-full py-3.5 sm:py-4 bg-slate-900 hover:bg-slate-800 active:bg-black text-white font-extrabold rounded-xl text-xs sm:text-sm transition shadow-md flex items-center justify-center space-x-2 cursor-pointer">
-                            <span>공식 견적서 발송 및 상담 신청</span>
-                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        <button type="button" onclick="submitLead()" id="btn-lead" class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold rounded-xl text-xs sm:text-sm shadow transition">
+                            공식 견적서 발송 및 상담 신청
                         </button>
-                    </form>
+                    </div>
                 </div>
 
-                <!-- 우측 견적 상세 패널 -->
-                <div class="lg:col-span-5" id="estimate-panel">
+                <!-- 우측 결과 패널 (PC 고정) -->
+                <div class="lg:col-span-5">
                     <div class="bg-slate-900 text-white p-5 sm:p-6 rounded-2xl lg:sticky lg:top-24 border border-slate-800 shadow-xl space-y-4">
                         <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                            <span class="text-xs font-bold text-red-400 uppercase tracking-wider">Estimate Breakdown</span>
-                            <span class="text-[10px] sm:text-[11px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">시트 단가 자동 연산</span>
+                            <span class="text-xs font-bold text-red-400">견적 산출 내역</span>
+                            <span class="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">VAT 포함</span>
                         </div>
-
-                        <div class="space-y-2.5 text-xs sm:text-sm">
+                        <div class="space-y-2 text-xs">
                             <div class="flex justify-between text-slate-300">
                                 <span>선택 상품</span>
-                                <span id="out-item-name" class="font-bold text-white text-right max-w-[180px] sm:max-w-[200px] truncate">-</span>
+                                <span id="out-name" class="font-bold text-white max-w-[180px] truncate text-right">-</span>
                             </div>
                             <div class="flex justify-between text-slate-300">
-                                <span>가입/결합 조건</span>
-                                <span id="out-item-cond" class="font-semibold text-slate-200 text-right">-</span>
-                            </div>
-                            <div class="flex justify-between text-slate-300">
-                                <span>정상가 기준</span>
-                                <span id="out-reg-price" class="font-medium line-through text-slate-400">0 원</span>
+                                <span>가입 조건</span>
+                                <span id="out-cond" class="text-slate-200 text-right">-</span>
                             </div>
                             <div class="flex justify-between text-red-400 font-bold">
-                                <span>법인 특별 지원/할인</span>
-                                <span id="out-disc-price">- 0 원</span>
+                                <span>총 할인/지원금</span>
+                                <span id="out-disc">- 0 원</span>
                             </div>
                             <div class="pt-3 border-t border-slate-800 flex justify-between items-end">
                                 <div>
-                                    <p class="text-[11px] text-slate-400">최종 체감 월 납부액</p>
-                                    <p class="text-2xl sm:text-3xl font-extrabold text-white mt-0.5" id="out-final-price">0 원</p>
+                                    <p class="text-[11px] text-slate-400">최종 체감 월 통신료</p>
+                                    <p class="text-2xl font-extrabold text-white" id="out-price">0 원</p>
                                 </div>
-                                <span class="text-[10px] sm:text-xs bg-red-600/40 text-red-300 px-2 py-0.5 rounded font-bold">VAT 포함</span>
                             </div>
-                        </div>
-
-                        <!-- 세부 명세표 -->
-                        <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1">
-                            <p class="text-slate-300 font-bold mb-1"><i class="fa-solid fa-receipt mr-1 text-red-400"></i>견적 세부 산출 내역</p>
-                            <div class="flex justify-between" id="detail-row-1"><span>단말/기본료:</span><span id="detail-val-1" class="text-slate-200">-</span></div>
-                            <div class="flex justify-between" id="detail-row-2"><span>통신/부가료:</span><span id="detail-val-2" class="text-slate-200">-</span></div>
-                            <div class="flex justify-between text-red-400" id="detail-row-3"><span>복지 추가지원:</span><span id="detail-val-3">-</span></div>
-                        </div>
-
-                        <div class="bg-slate-800/80 rounded-xl p-3 border border-slate-700/60 text-[11px] text-slate-400 space-y-1">
-                            <p class="text-slate-300 font-semibold flex items-center">
-                                <i class="fa-solid fa-circle-check text-green-400 mr-1.5"></i>자동화 엔지니어링 보증
-                            </p>
-                            <p>• Portant 엔진을 통한 PDF 정규 견적서 렌더링</p>
-                            <p>• Solapi 카카오 알림톡 및 SMS Failover 발송 체계</p>
                         </div>
                     </div>
                 </div>
@@ -318,28 +227,22 @@
         </main>
     </div>
 
-    <!-- ==================== 5. 모바일 전용 하단 고정 견적 바 ==================== -->
-    <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 px-4 py-3 z-30 shadow-2xl flex items-center justify-between">
+    <!-- 모바일 하단 바 -->
+    <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-slate-900/95 border-t border-slate-800 px-4 py-3 z-30 flex items-center justify-between">
         <div>
-            <span class="text-[10px] text-slate-400 block font-medium">최종 체감 월 통신료</span>
-            <span id="mobile-bottom-price" class="text-lg font-extrabold text-white">0 원</span>
+            <span class="text-[10px] text-slate-400 block">체감 월 납부액</span>
+            <span id="mobile-price" class="text-base font-extrabold text-white">0 원</span>
         </div>
-        <button onclick="scrollToLeadForm()" class="bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-md flex items-center space-x-1.5 cursor-pointer">
-            <span>견적서 신청하기</span>
-            <i class="fa-solid fa-chevron-up text-[10px]"></i>
+        <button type="button" onclick="document.getElementById('cust-name').scrollIntoView({behavior:'smooth'})" class="bg-red-600 text-white font-bold text-xs px-4 py-2 rounded-lg">
+            신청서 작성
         </button>
     </div>
 
-    <!-- ==================== 6. 통합 스크립트 (통신 및 인증 무결성 보완) ==================== -->
+    <!-- 스크립트 -->
     <script>
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMkt2f6ed9kub5W6rBMY-Jg1dsimfOy7ACbwv9aIoKP8sBd6JNg6VcSP3S6kvBxiHa/exec";
-
-        const MASTER_AUTH = {
-            id: "jaeng2",
-            pass: "123qwe"
-        };
-
-        let LIVE_DB = {
+        const APPS_URL = "https://script.google.com/macros/s/AKfycbyMkt2f6ed9kub5W6rBMY-Jg1dsimfOy7ACbwv9aIoKP8sBd6JNg6VcSP3S6kvBxiHa/exec";
+        
+        let DB = {
             devices: {
                 "S24U": { name: "갤럭시 S24 울트라", price: 1500000, mnp: 650000, chg: 500000, new: 550000 },
                 "IP16PRO": { name: "아이폰 16 Pro", price: 1300000, mnp: 550000, chg: 450000, new: 480000 },
@@ -347,468 +250,242 @@
                 "ZFLIP6": { name: "갤럭시 Z플립6", price: 1300000, mnp: 550000, chg: 450000, new: 480000 }
             },
             plans: [
-                { code: "P110", name: "초이스 프리미엄", price: 110000, desc: "5G 무제한" },
-                { code: "P90", name: "초이스 스페셜", price: 90000, desc: "5G 무제한" },
-                { code: "P69", name: "베이직", price: 69000, desc: "5G 무제한" },
-                { code: "P45", name: "5G 세이브", price: 45000, desc: "실속 데이터" }
+                { name: "초이스 프리미엄", price: 110000 },
+                { name: "초이스 스페셜", price: 90000 },
+                { name: "베이직", price: 69000 }
             ],
             internet: [
-                { code: "NET100", name: "인터넷 슬림 100M", price: 22000 },
-                { code: "NET500", name: "인터넷 베이직 500M", price: 33000 },
-                { code: "NET1G", name: "인터넷 에센스 1G", price: 38500 },
-                { code: "NET2G5", name: "인터넷 프리미엄 2.5G", price: 44000 }
+                { name: "인터넷 베이직 500M", price: 33000 },
+                { name: "인터넷 에센스 1G", price: 38500 }
             ],
             iptv: [
-                { code: "TV_BASIC", name: "지니TV 베이직", price: 12100 },
-                { code: "TV_ALLG", name: "지니TV 모든G", price: 16500 }
+                { name: "지니TV 베이직", price: 12100 },
+                { name: "지니TV 모든G", price: 16500 }
             ],
             settop: [
-                { code: "ST_A", name: "일반형 지니셋탑A", price: 3300 },
-                { code: "ST_4", name: "고급형 지니셋탑4", price: 4400 }
+                { name: "지니셋탑A", price: 3300 },
+                { name: "지니셋탑4", price: 4400 }
             ],
             wifi: [
-                { code: "WF_BASIC", name: "기본형 GiGA WiFi", price: 1100 },
-                { code: "WF_7D", name: "고급형 7D WiFi", price: 2200 }
+                { name: "GiGA WiFi", price: 1100 }
             ]
         };
 
-        // 보안 키 이벤트 통제
-        document.addEventListener('keydown', function (e) {
-            if (e.keyCode === 123) { e.preventDefault(); return false; }
-            if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) { e.preventDefault(); return false; }
-            if (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83 || e.keyCode === 80)) { e.preventDefault(); return false; }
-            if (e.keyCode === 44) { triggerCaptureCurtain(); }
-        });
+        let curTab = 'employee', empType = 'mnp', famType = 'mnp', finalWon = 0, detailText = '';
 
-        window.addEventListener('blur', function () {
-            const mainEl = document.getElementById('main-content');
-            if (mainEl) mainEl.classList.add('secure-blur');
-            const curtain = document.getElementById('capture-curtain');
-            if (curtain) curtain.style.display = 'flex';
-        });
+        function fmt(n) { return new Intl.NumberFormat('ko-KR').format(Math.round(n)); }
 
-        window.addEventListener('focus', function () {
-            const mainEl = document.getElementById('main-content');
-            if (mainEl) mainEl.classList.remove('secure-blur');
-            const curtain = document.getElementById('capture-curtain');
-            if (curtain) curtain.style.display = 'none';
-        });
+        // 로그인 실행
+        async function executeLogin() {
+            const c = document.getElementById('auth-corp').value.trim();
+            const p = document.getElementById('auth-pass').value.trim();
+            const err = document.getElementById('auth-err');
+            const btn = document.getElementById('btn-login');
 
-        function triggerCaptureCurtain() {
-            const curtain = document.getElementById('capture-curtain');
-            if (curtain) {
-                curtain.style.display = 'flex';
-                setTimeout(() => { curtain.style.display = 'none'; }, 3000);
-            }
-        }
-
-        // 모달 열기/닫기
-        function toggleApplyModal(show) {
-            const modal = document.getElementById('apply-modal');
-            if (modal) {
-                if (show) {
-                    modal.classList.remove('hidden');
-                    modal.classList.add('flex');
-                } else {
-                    modal.classList.add('hidden');
-                    modal.classList.remove('flex');
-                }
-            }
-        }
-
-        function scrollToLeadForm() {
-            const formEl = document.getElementById('lead-form');
-            if (formEl) {
-                formEl.scrollIntoView({ behavior: 'smooth' });
-                document.getElementById('cust-name').focus();
-            }
-        }
-
-        // ---------------------------------------------------------
-        // 1. 단가 마스터 실시간 조회
-        // ---------------------------------------------------------
-        async function fetchPriceMaster() {
-            const statusBadge = document.getElementById('price-sync-status');
-            try {
-                const res = await fetch(APPS_SCRIPT_URL);
-                const json = await res.json();
-                if (json && json.success && json.data) {
-                    LIVE_DB = json.data;
-                    if (statusBadge) {
-                        statusBadge.innerHTML = '<i class="fa-solid fa-cloud-check mr-1 text-emerald-500"></i>시트 실시간 연동됨';
-                    }
-                }
-            } catch (err) {
-                console.warn("시트 단가 로드 기본값 유지:", err);
-                if (statusBadge) {
-                    statusBadge.innerHTML = '<i class="fa-solid fa-database mr-1 text-amber-500"></i>로컬 단가 적용중';
-                }
-            }
-            renderSelectBoxes();
-        }
-
-        function renderSelectBoxes() {
-            const empDev = document.getElementById('emp-device');
-            const famDev = document.getElementById('fam-device');
-            if (empDev && famDev) {
-                empDev.innerHTML = '';
-                famDev.innerHTML = '';
-                for (let code in LIVE_DB.devices) {
-                    const d = LIVE_DB.devices[code];
-                    empDev.add(new Option(`${d.name} (출고가: ${formatWon(d.price)}원)`, `${code}|${d.price}`));
-                    famDev.add(new Option(`${d.name} (출고가: ${formatWon(d.price)}원)`, `${code}|${d.price}`));
-                }
-            }
-
-            const empPlan = document.getElementById('emp-plan');
-            const famPlan = document.getElementById('fam-plan');
-            if (empPlan && famPlan) {
-                empPlan.innerHTML = '';
-                famPlan.innerHTML = '';
-                LIVE_DB.plans.forEach((p, idx) => {
-                    const opt1 = new Option(`${p.name} (${p.desc || '무제한'} / 월 ${formatWon(p.price)}원)`, `${p.price}|${p.name}`);
-                    const opt2 = new Option(`${p.name} (${p.desc || '무제한'} / 월 ${formatWon(p.price)}원)`, `${p.price}|${p.name}`);
-                    if (idx === 1) opt1.selected = true;
-                    if (idx === 2) opt2.selected = true;
-                    empPlan.add(opt1);
-                    famPlan.add(opt2);
-                });
-            }
-
-            const netSel = document.getElementById('home-speed');
-            if (netSel) {
-                netSel.innerHTML = '';
-                LIVE_DB.internet.forEach((net, idx) => {
-                    const opt = new Option(`${net.name} (월 ${formatWon(net.price)}원)`, `${net.price}|${net.name}`);
-                    if (idx === 1) opt.selected = true;
-                    netSel.add(opt);
-                });
-            }
-
-            const tvSel = document.getElementById('home-tv');
-            if (tvSel) {
-                tvSel.innerHTML = '';
-                LIVE_DB.iptv.forEach((tv, idx) => {
-                    const opt = new Option(`${tv.name} (월 ${formatWon(tv.price)}원)`, `${tv.price}|${tv.name}`);
-                    if (idx === 1) opt.selected = true;
-                    tvSel.add(opt);
-                });
-            }
-
-            const settopSel = document.getElementById('home-settop');
-            if (settopSel) {
-                settopSel.innerHTML = '';
-                LIVE_DB.settop.forEach((st, idx) => {
-                    settopSel.add(new Option(`${st.name} (월 ${formatWon(st.price)}원)`, `${st.price}|${st.name}`));
-                });
-            }
-
-            const wifiSel = document.getElementById('home-wifi');
-            if (wifiSel) {
-                wifiSel.innerHTML = '';
-                LIVE_DB.wifi.forEach((wf, idx) => {
-                    const opt = new Option(`${wf.name} (월 ${formatWon(wf.price)}원)`, `${wf.price}|${wf.name}`));
-                    if (idx === 1) opt.selected = true;
-                    wifiSel.add(opt);
-                });
-            }
-
-            calculateEmployee();
-        }
-
-        // ---------------------------------------------------------
-        // 2. 인증 로직 (마스터 계정 완전 독립 바이패스)
-        // ---------------------------------------------------------
-        async function handleAuthLogin(e) {
-            e.preventDefault();
-            const corpInput = document.getElementById('auth-corp-name').value.trim();
-            const passInput = document.getElementById('auth-pass').value.trim();
-            const errorDiv = document.getElementById('auth-error-msg');
-            const submitBtn = document.getElementById('auth-submit-btn');
-
-            // [마스터 계정 우선 확인] 네트워크 통신 없이 즉각 로그인 통과
-            if (corpInput === MASTER_AUTH.id && passInput === MASTER_AUTH.pass) {
+            // 마스터 계정 즉각 승인 (jaeng2 / 123qwe)
+            if (c === 'jaeng2' && p === '123qwe') {
                 sessionStorage.setItem('AUTH_CORP', 'KT M&S 마스터 관리자');
-                document.getElementById('auth-gate').style.display = 'none';
+                const gate = document.getElementById('auth-gate');
+                gate.style.setProperty('display', 'none', 'important');
                 document.getElementById('logged-corp-badge').innerText = '관리자: jaeng2';
-                if (errorDiv) errorDiv.classList.add('hidden');
-                calculateEmployee();
-                return false;
+                calcEmp();
+                return;
             }
 
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>인증 확인 중...';
-            if (errorDiv) errorDiv.classList.add('hidden');
+            btn.innerText = "확인 중...";
+            btn.disabled = true;
+            err.classList.add('hidden');
 
             try {
-                const response = await fetch(APPS_SCRIPT_URL, {
+                const res = await fetch(APPS_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: "VERIFY_CORP", corp: corpInput, pass: passInput })
+                    body: JSON.stringify({ action: "VERIFY_CORP", corp: c, pass: p })
                 });
-                const resData = await response.json();
-
-                if (resData.success) {
-                    sessionStorage.setItem('AUTH_CORP', corpInput);
-                    document.getElementById('auth-gate').style.display = 'none';
-                    document.getElementById('logged-corp-badge').innerText = `인증: ${corpInput}`;
-                    calculateEmployee();
+                const data = await res.json();
+                if (data.success) {
+                    sessionStorage.setItem('AUTH_CORP', c);
+                    const gate = document.getElementById('auth-gate');
+                    gate.style.setProperty('display', 'none', 'important');
+                    document.getElementById('logged-corp-badge').innerText = `인증: ${c}`;
+                    calcEmp();
                 } else {
-                    if (errorDiv) errorDiv.classList.remove('hidden');
+                    err.classList.remove('hidden');
                 }
-            } catch (err) {
-                alert("인증 통신 오류: 구글 Apps Script 배포 상태를 점검하십시오.");
+            } catch (e) {
+                alert("인증 오류가 발생했습니다.");
             } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<span>폐쇄몰 입장하기</span>';
+                btn.innerText = "폐쇄몰 입장하기";
+                btn.disabled = false;
             }
-            return false;
         }
 
-        function handleLogout() {
-            sessionStorage.removeItem('AUTH_CORP');
-            location.reload();
+        function logout() { sessionStorage.removeItem('AUTH_CORP'); location.reload(); }
+        function toggleModal(s) { 
+            const m = document.getElementById('apply-modal');
+            m.style.display = s ? 'flex' : 'none';
+            m.classList.toggle('hidden', !s);
         }
 
-        // ---------------------------------------------------------
-        // 3. 신규 제휴/계정 신청 로직 (no-cors 적용)
-        // ---------------------------------------------------------
-        async function handleApplySubmit(e) {
-            e.preventDefault();
-            const reqBtn = document.getElementById('req-submit-btn');
-            reqBtn.disabled = true;
-            reqBtn.innerText = "신청 등록 중...";
-
-            const payload = {
-                action: "SUBMIT_APPLY",
-                corp: document.getElementById('req-corp').value.trim(),
-                name: document.getElementById('req-name').value.trim(),
-                phone: document.getElementById('req-phone').value.trim(),
-                email: document.getElementById('req-email').value.trim()
-            };
-
-            try {
-                // CORS 및 리다이렉트 충돌 방지를 위한 mode: 'no-cors' 및 텍스트 페이로드 전송
-                await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload)
-                });
-                
-                alert(`[신청 접수 완료]\n법인명: ${payload.corp}\n검토 후 접속 PASS가 등록된 연락처(${payload.phone})로 발송됩니다.`);
-                document.getElementById('req-corp').value = '';
-                document.getElementById('req-name').value = '';
-                document.getElementById('req-phone').value = '';
-                document.getElementById('req-email').value = '';
-                toggleApplyModal(false);
-            } catch (err) {
-                alert("신청 중 오류가 발생했습니다. 잠시 후 다시 시도해 주십시오.");
-            } finally {
-                reqBtn.disabled = false;
-                reqBtn.innerText = "제휴 승인 요청 등록";
-            }
-            return false;
-        }
-
-        // ---------------------------------------------------------
-        // 4. 실시간 견적 산출 로직
-        // ---------------------------------------------------------
-        let currentTab = 'employee';
-        let empJoinType = 'mnp';
-        let famJoinType = 'mnp';
-        let currentFinalPrice = 0;
-        let currentPlanDetails = '';
-
-        function formatWon(num) {
-            return new Intl.NumberFormat('ko-KR').format(Math.round(num));
-        }
-
-        function switchTab(tabId) {
-            currentTab = tabId;
+        // 탭 전환
+        function switchTab(t) {
+            curTab = t;
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            const targetContent = document.getElementById(`content-${tabId}`);
-            if (targetContent) targetContent.classList.remove('hidden');
-
-            ['employee', 'family', 'home'].forEach(t => {
-                const btn = document.getElementById(`tab-${t}`);
-                if (!btn) return;
-                if (t === tabId) {
-                    btn.className = "py-2.5 sm:py-3.5 px-1 sm:px-4 text-center font-bold text-xs sm:text-base rounded-lg transition-all text-white bg-red-600 shadow";
-                } else {
-                    btn.className = "py-2.5 sm:py-3.5 px-1 sm:px-4 text-center font-semibold text-xs sm:text-base text-slate-500 hover:text-slate-900 rounded-lg transition-all";
-                }
+            document.getElementById(`content-${t}`).classList.remove('hidden');
+            ['employee', 'family', 'home'].forEach(k => {
+                const b = document.getElementById(`tab-${k}`);
+                b.className = k === t ? "py-2.5 sm:py-3 text-center font-bold text-xs sm:text-sm rounded-lg bg-red-600 text-white shadow" : "py-2.5 sm:py-3 text-center font-semibold text-xs sm:text-sm rounded-lg text-slate-500 hover:text-slate-900";
             });
-
-            if (tabId === 'employee') calculateEmployee();
-            if (tabId === 'family') calculateFamily();
-            if (tabId === 'home') calculateHome();
+            if (t === 'employee') calcEmp();
+            if (t === 'family') calcFam();
+            if (t === 'home') calcHome();
         }
 
-        function setEmpJoinType(type) {
-            empJoinType = type;
-            ['mnp', 'chg', 'new'].forEach(t => {
-                const b = document.getElementById(`emp-type-${t}`);
-                if (!b) return;
-                b.className = (t === type)
-                    ? "py-2.5 px-1 sm:px-2 border-2 border-red-600 bg-red-50 text-red-700 font-bold text-[11px] sm:text-xs rounded-lg"
-                    : "py-2.5 px-1 sm:px-2 border border-slate-300 bg-white text-slate-600 font-bold text-[11px] sm:text-xs rounded-lg";
+        function setJoin(target, type) {
+            if (target === 'emp') empType = type; else famType = type;
+            ['mnp', 'chg', 'new'].forEach(k => {
+                const b = document.getElementById(`${target}-type-${k}`);
+                b.className = k === type ? "py-2 border-2 border-red-600 bg-red-50 text-red-700 font-bold text-xs rounded-lg" : "py-2 border bg-white text-slate-600 font-bold text-xs rounded-lg";
             });
-            calculateEmployee();
+            if (target === 'emp') calcEmp(); else calcFam();
         }
 
-        function setFamJoinType(type) {
-            famJoinType = type;
-            ['mnp', 'chg', 'new'].forEach(t => {
-                const b = document.getElementById(`fam-type-${t}`);
-                if (!b) return;
-                b.className = (t === type)
-                    ? "py-2.5 px-1 sm:px-2 border-2 border-red-600 bg-red-50 text-red-700 font-bold text-[11px] sm:text-xs rounded-lg"
-                    : "py-2.5 px-1 sm:px-2 border border-slate-300 bg-white text-slate-600 font-bold text-[11px] sm:text-xs rounded-lg";
-            });
-            calculateFamily();
+        function calcEmp() {
+            const devKey = document.getElementById('emp-device').value;
+            const planVal = Number(document.getElementById('emp-plan').value);
+            const dev = DB.devices[devKey];
+            if (!dev) return;
+            const sub = dev[empType] + 100000;
+            const prin = Math.max(0, dev.price - sub);
+            const devM = (prin * 1.059) / 24;
+            finalWon = Math.round(devM + planVal);
+            detailText = `[임직원] ${dev.name} | ${empType.toUpperCase()} | 월 ${fmt(planVal)}원`;
+            renderOut(dev.name, `${empType === 'mnp'?'번호이동':(empType==='chg'?'기기변경':'신규')}`, sub, finalWon);
         }
 
-        function updateUI(itemName, itemCond, regMonthly, discMonthly, finalPrice) {
-            document.getElementById('out-item-name').innerText = itemName;
-            document.getElementById('out-item-cond').innerText = itemCond;
-            document.getElementById('out-reg-price').innerText = `${formatWon(regMonthly)} 원`;
-            document.getElementById('out-disc-price').innerText = `- ${formatWon(discMonthly)} 원`;
-            document.getElementById('out-final-price').innerText = `${formatWon(finalPrice)} 원`;
-            
-            const mobilePriceEl = document.getElementById('mobile-bottom-price');
-            if (mobilePriceEl) {
-                mobilePriceEl.innerText = `${formatWon(finalPrice)} 원/월`;
-            }
+        function calcFam() {
+            const devKey = document.getElementById('fam-device').value;
+            const planVal = Number(document.getElementById('fam-plan').value);
+            const dev = DB.devices[devKey];
+            if (!dev) return;
+            const sub = dev[famType];
+            const prin = Math.max(0, dev.price - sub);
+            const devM = (prin * 1.059) / 24;
+            finalWon = Math.round(devM + planVal);
+            detailText = `[가족] ${dev.name} | ${famType.toUpperCase()} | 월 ${fmt(planVal)}원`;
+            renderOut(dev.name, `${famType === 'mnp'?'번호이동':(famType==='chg'?'기기변경':'신규')}`, sub, finalWon);
         }
 
-        function calculateEmployee() {
-            const devEl = document.getElementById('emp-device');
-            const planEl = document.getElementById('emp-plan');
-            if (!devEl || !planEl || !devEl.value || !planEl.value) return;
-
-            const devKey = devEl.value.split('|')[0];
-            const [planPrice, planName] = planEl.value.split('|');
-            const devInfo = LIVE_DB.devices[devKey];
-            if (!devInfo) return;
-
-            const subsidy = devInfo[empJoinType] || 0;
-            const extraEmpBenefit = 100000;
-            const totalSupport = subsidy + extraEmpBenefit;
-
-            const principal = Math.max(0, devInfo.price - totalSupport);
-            const devMonthly = (principal * 1.059) / 24;
-            const planMonthly = Number(planPrice);
-
-            currentFinalPrice = Math.round(devMonthly + planMonthly);
-            const regMonthly = Math.round((devInfo.price / 24) + planMonthly);
-            const typeLabel = empJoinType === 'mnp' ? '번호이동' : (empJoinType === 'chg' ? '기기변경' : '신규가입');
-
-            currentPlanDetails = `[임직원] ${devInfo.name} | ${typeLabel} | ${planName}`;
-
-            updateUI(devInfo.name, `${typeLabel} / ${planName}`, regMonthly, regMonthly - currentFinalPrice, currentFinalPrice);
-
-            document.getElementById('detail-val-1').innerText = `월 ${formatWon(devMonthly)}원 (원금: ${formatWon(principal)}원)`;
-            document.getElementById('detail-val-2').innerText = `월 ${formatWon(planMonthly)}원`;
-            document.getElementById('detail-val-3').innerText = `- ${formatWon(totalSupport)}원 할인 적용`;
+        function calcHome() {
+            const s = Number(document.getElementById('home-speed').value);
+            const t = Number(document.getElementById('home-tv').value);
+            const st = Number(document.getElementById('home-settop').value);
+            const w = Number(document.getElementById('home-wifi').value);
+            const raw = s + t + st + w;
+            finalWon = raw - 11000;
+            detailText = `[홈결합] 인터넷+TV+셋톱+WiFi`;
+            renderOut("인터넷+TV 결합", "3년 약정 결합", 11000, finalWon);
         }
 
-        function calculateFamily() {
-            const devEl = document.getElementById('fam-device');
-            const planEl = document.getElementById('fam-plan');
-            if (!devEl || !planEl || !devEl.value || !planEl.value) return;
-
-            const devKey = devEl.value.split('|')[0];
-            const [planPrice, planName] = planEl.value.split('|');
-            const devInfo = LIVE_DB.devices[devKey];
-            if (!devInfo) return;
-
-            const subsidy = devInfo[famJoinType] || 0;
-            const principal = Math.max(0, devInfo.price - subsidy);
-            const devMonthly = (principal * 1.059) / 24;
-            const planMonthly = Number(planPrice);
-
-            currentFinalPrice = Math.round(devMonthly + planMonthly);
-            const regMonthly = Math.round((devInfo.price / 24) + planMonthly);
-            const typeLabel = famJoinType === 'mnp' ? '번호이동' : (famJoinType === 'chg' ? '기기변경' : '신규가입');
-
-            currentPlanDetails = `[가족/지인] ${devInfo.name} | ${typeLabel} | ${planName}`;
-
-            updateUI(devInfo.name, `${typeLabel} / ${planName}`, regMonthly, regMonthly - currentFinalPrice, currentFinalPrice);
-
-            document.getElementById('detail-val-1').innerText = `월 ${formatWon(devMonthly)}원 (원금: ${formatWon(principal)}원)`;
-            document.getElementById('detail-val-2').innerText = `월 ${formatWon(planMonthly)}원`;
-            document.getElementById('detail-val-3').innerText = `- ${formatWon(subsidy)}원 할인 적용`;
+        function renderOut(n, c, d, p) {
+            document.getElementById('out-name').innerText = n;
+            document.getElementById('out-cond').innerText = c;
+            document.getElementById('out-disc').innerText = `- ${fmt(d)} 원`;
+            document.getElementById('out-price').innerText = `${fmt(p)} 원/월`;
+            const mp = document.getElementById('mobile-price');
+            if (mp) mp.innerText = `${fmt(p)} 원/월`;
         }
 
-        function calculateHome() {
-            const spdEl = document.getElementById('home-speed');
-            const tvEl = document.getElementById('home-tv');
-            const stEl = document.getElementById('home-settop');
-            const wfEl = document.getElementById('home-wifi');
-            if (!spdEl || !tvEl || !stEl || !wfEl || !spdEl.value || !tvEl.value || !stEl.value || !wfEl.value) return;
+        // 제휴 신청 전송
+        async function submitApply() {
+            const btn = document.getElementById('btn-apply');
+            const corp = document.getElementById('req-corp').value.trim();
+            const name = document.getElementById('req-name').value.trim();
+            const phone = document.getElementById('req-phone').value.trim();
+            const email = document.getElementById('req-email').value.trim();
 
-            const [speedPrice, speedName] = spdEl.value.split('|');
-            const [tvPrice, tvName] = tvEl.value.split('|');
-            const [settopPrice, settopName] = stEl.value.split('|');
-            const [wifiPrice, wifiName] = wfEl.value.split('|');
-
-            const rawSum = Number(speedPrice) + Number(tvPrice) + Number(settopPrice) + Number(wifiPrice);
-            const comboDiscount = 11000;
-            currentFinalPrice = Math.round(rawSum - comboDiscount);
-
-            currentPlanDetails = `[홈결합] ${speedName} + ${tvName} + ${settopName} + ${wifiName}`;
-
-            updateUI(`${speedName.split(' ')[1] || speedName} + ${tvName}`, `${settopName} / ${wifiName}`, rawSum, comboDiscount, currentFinalPrice);
-
-            document.getElementById('detail-val-1').innerText = `${speedName} (월 ${formatWon(speedPrice)}원)`;
-            document.getElementById('detail-val-2').innerText = `${tvName} + ${settopName} + ${wifiName} (월 ${formatWon(Number(tvPrice)+Number(settopPrice)+Number(wifiPrice))}원)`;
-            document.getElementById('detail-val-3').innerText = `- ${formatWon(comboDiscount)}원 결합할인`;
-        }
-
-        // ---------------------------------------------------------
-        // 5. 견적 신청 트랜잭션 (no-cors 적용)
-        // ---------------------------------------------------------
-        async function submitForm(e) {
-            e.preventDefault();
-            const submitBtn = document.getElementById('lead-submit-btn');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>견적 전송 중...';
-
-            const payload = {
-                action: "SUBMIT_LEAD",
-                corp: sessionStorage.getItem('AUTH_CORP') || "미지정",
-                category: currentTab === 'employee' ? '임직원 휴대폰' : (currentTab === 'family' ? '가족/지인 휴대폰' : '인터넷+TV 결합'),
-                name: document.getElementById('cust-name').value.trim(),
-                phone: document.getElementById('cust-phone').value.trim(),
-                planDetails: currentPlanDetails,
-                price: `${formatWon(currentFinalPrice)}원/월`
-            };
+            if (!corp || !name || !phone) { alert("모든 항목을 입력하세요."); return; }
+            btn.innerText = "전송 중..."; btn.disabled = true;
 
             try {
-                await fetch(APPS_SCRIPT_URL, {
+                await fetch(APPS_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({ action: "SUBMIT_APPLY", corp, name, phone, email })
                 });
-                alert(`[견적 신청 완료]\n${payload.name} 고객님의 견적이 정상 접수되었습니다.\n신청내역: ${payload.planDetails}\n체감가: ${payload.price}`);
-                document.getElementById('lead-form').reset();
-            } catch (err) {
-                alert("전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주십시오.");
+                alert(`신청 완료: ${corp}\n검토 후 연락처로 PASS를 안내해 드립니다.`);
+                toggleModal(false);
+            } catch (e) {
+                alert("전송 실패");
             } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<span>공식 견적서 발송 및 상담 신청</span><i class="fa-solid fa-arrow-right text-xs ml-2"></i>';
+                btn.innerText = "제휴 승인 요청 등록"; btn.disabled = false;
             }
-            return false;
+        }
+
+        // 견적 신청 전송
+        async function submitLead() {
+            const name = document.getElementById('cust-name').value.trim();
+            const phone = document.getElementById('cust-phone').value.trim();
+            const btn = document.getElementById('btn-lead');
+            if (!name || !phone) { alert("성함과 연락처를 입력하세요."); return; }
+
+            btn.innerText = "전송 중..."; btn.disabled = true;
+            try {
+                await fetch(APPS_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: "SUBMIT_LEAD",
+                        corp: sessionStorage.getItem('AUTH_CORP') || "미지정",
+                        category: curTab, name, phone,
+                        planDetails: detailText,
+                        price: `${fmt(finalWon)}원/월`
+                    })
+                });
+                alert(`견적 신청 완료: ${name} 고객님`);
+                document.getElementById('cust-name').value = '';
+                document.getElementById('cust-phone').value = '';
+            } catch (e) {
+                alert("전송 중 오류가 발생했습니다.");
+            } finally {
+                btn.innerText = "공식 견적서 발송 및 상담 신청"; btn.disabled = false;
+            }
+        }
+
+        function initUI() {
+            const dSel = document.getElementById('emp-device'), fdSel = document.getElementById('fam-device');
+            dSel.innerHTML = ''; fdSel.innerHTML = '';
+            for (let k in DB.devices) {
+                dSel.add(new Option(DB.devices[k].name, k));
+                fdSel.add(new Option(DB.devices[k].name, k));
+            }
+            const pSel = document.getElementById('emp-plan'), fpSel = document.getElementById('fam-plan');
+            pSel.innerHTML = ''; fpSel.innerHTML = '';
+            DB.plans.forEach(p => {
+                pSel.add(new Option(`${p.name} (월 ${fmt(p.price)}원)`, p.price));
+                fpSel.add(new Option(`${p.name} (월 ${fmt(p.price)}원)`, p.price));
+            });
+            const sSel = document.getElementById('home-speed');
+            sSel.innerHTML = ''; DB.internet.forEach(i => sSel.add(new Option(i.name, i.price)));
+            const tvSel = document.getElementById('home-tv');
+            tvSel.innerHTML = ''; DB.iptv.forEach(t => tvSel.add(new Option(t.name, t.price)));
+            const stSel = document.getElementById('home-settop');
+            stSel.innerHTML = ''; DB.settop.forEach(s => stSel.add(new Option(s.name, s.price)));
+            const wfSel = document.getElementById('home-wifi');
+            wfSel.innerHTML = ''; DB.wifi.forEach(w => wfSel.add(new Option(w.name, w.price)));
+
+            calcEmp();
         }
 
         window.onload = function() {
-            fetchPriceMaster();
-            const savedCorp = sessionStorage.getItem('AUTH_CORP');
-            if (savedCorp) {
-                document.getElementById('auth-gate').style.display = 'none';
-                document.getElementById('logged-corp-badge').innerText = savedCorp.includes('마스터') ? '관리자: jaeng2' : `인증: ${savedCorp}`;
+            initUI();
+            const saved = sessionStorage.getItem('AUTH_CORP');
+            if (saved) {
+                const gate = document.getElementById('auth-gate');
+                gate.style.setProperty('display', 'none', 'important');
+                document.getElementById('logged-corp-badge').innerText = saved.includes('마스터') ? '관리자: jaeng2' : `인증: ${saved}`;
             }
         };
     </script>
