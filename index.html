@@ -322,8 +322,8 @@
 
     <!-- ==================== 4. 동적 단가 바인딩 및 연동 스크립트 ==================== -->
     <script>
-        // 새로 배포된 Apps Script 웹 앱 엔드포인트 URL
-        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz6t67QbAnakR6VvfkpayYFRbcFgLZLwsn-1V_GU4kNkfLq9CmZ3SJbh9rQoB68V_LK/exec";
+        // 새로 배포된 최신 Apps Script 웹 앱 엔드포인트 URL
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMkt2f6ed9kub5W6rBMY-Jg1dsimfOy7ACbwv9aIoKP8sBd6JNg6VcSP3S6kvBxiHa/exec";
 
         const MASTER_AUTH = {
             id: "jaeng2",
@@ -373,98 +373,119 @@
         });
 
         window.addEventListener('blur', function () {
-            document.getElementById('main-content').classList.add('secure-blur');
-            document.getElementById('capture-curtain').style.display = 'flex';
+            const mainEl = document.getElementById('main-content');
+            if (mainEl) mainEl.classList.add('secure-blur');
+            const curtain = document.getElementById('capture-curtain');
+            if (curtain) curtain.style.display = 'flex';
         });
 
         window.addEventListener('focus', function () {
-            document.getElementById('main-content').classList.remove('secure-blur');
-            document.getElementById('capture-curtain').style.display = 'none';
+            const mainEl = document.getElementById('main-content');
+            if (mainEl) mainEl.classList.remove('secure-blur');
+            const curtain = document.getElementById('capture-curtain');
+            if (curtain) curtain.style.display = 'none';
         });
 
         function triggerCaptureCurtain() {
-            document.getElementById('capture-curtain').style.display = 'flex';
-            setTimeout(() => { document.getElementById('capture-curtain').style.display = 'none'; }, 3000);
+            const curtain = document.getElementById('capture-curtain');
+            if (curtain) {
+                curtain.style.display = 'flex';
+                setTimeout(() => { curtain.style.display = 'none'; }, 3000);
+            }
         }
 
         // ==================== 구글 시트 실시간 단가 조회 & UI 렌더링 ====================
         async function fetchPriceMaster() {
+            const statusBadge = document.getElementById('price-sync-status');
             try {
                 const res = await fetch(APPS_SCRIPT_URL);
                 const json = await res.json();
                 if (json.success && json.data) {
                     LIVE_DB = json.data;
-                    document.getElementById('price-sync-status').innerHTML = '<i class="fa-solid fa-cloud-check mr-1 text-emerald-500"></i>시트 실시간 연동됨';
+                    if (statusBadge) {
+                        statusBadge.innerHTML = '<i class="fa-solid fa-cloud-check mr-1 text-emerald-500"></i>시트 실시간 연동됨';
+                    }
                 }
             } catch (err) {
-                console.log("시트 동기화 기본값 유지:", err);
-                document.getElementById('price-sync-status').innerHTML = '<i class="fa-solid fa-database mr-1 text-amber-500"></i>로컬 단가 적용중';
+                console.warn("시트 단가 동기화 지연 (로컬 단가 적용):", err);
+                if (statusBadge) {
+                    statusBadge.innerHTML = '<i class="fa-solid fa-database mr-1 text-amber-500"></i>로컬 단가 적용중';
+                }
             }
             renderSelectBoxes();
         }
 
         function renderSelectBoxes() {
-            // 1. 임직원 단말
+            // 1. 단말기
             const empDev = document.getElementById('emp-device');
             const famDev = document.getElementById('fam-device');
-            empDev.innerHTML = '';
-            famDev.innerHTML = '';
-            for (let code in LIVE_DB.devices) {
-                const d = LIVE_DB.devices[code];
-                const opt1 = new Option(`${d.name} (출고가: ${formatWon(d.price)}원)`, `${code}|${d.price}`);
-                const opt2 = new Option(`${d.name} (출고가: ${formatWon(d.price)}원)`, `${code}|${d.price}`);
-                empDev.add(opt1);
-                famDev.add(opt2);
+            if (empDev && famDev) {
+                empDev.innerHTML = '';
+                famDev.innerHTML = '';
+                for (let code in LIVE_DB.devices) {
+                    const d = LIVE_DB.devices[code];
+                    empDev.add(new Option(`${d.name} (출고가: ${formatWon(d.price)}원)`, `${code}|${d.price}`));
+                    famDev.add(new Option(`${d.name} (출고가: ${formatWon(d.price)}원)`, `${code}|${d.price}`));
+                }
             }
 
             // 2. 모바일 요금제
             const empPlan = document.getElementById('emp-plan');
             const famPlan = document.getElementById('fam-plan');
-            empPlan.innerHTML = '';
-            famPlan.innerHTML = '';
-            LIVE_DB.plans.forEach((p, idx) => {
-                const opt1 = new Option(`${p.name} (${p.desc || '무제한'} / 월 ${formatWon(p.price)}원)`, `${p.price}|${p.name}`);
-                const opt2 = new Option(`${p.name} (${p.desc || '무제한'} / 월 ${formatWon(p.price)}원)`, `${p.price}|${p.name}`);
-                if (idx === 1) opt1.selected = true;
-                if (idx === 2) opt2.selected = true;
-                empPlan.add(opt1);
-                famPlan.add(opt2);
-            });
+            if (empPlan && famPlan) {
+                empPlan.innerHTML = '';
+                famPlan.innerHTML = '';
+                LIVE_DB.plans.forEach((p, idx) => {
+                    const opt1 = new Option(`${p.name} (${p.desc || '무제한'} / 월 ${formatWon(p.price)}원)`, `${p.price}|${p.name}`);
+                    const opt2 = new Option(`${p.name} (${p.desc || '무제한'} / 월 ${formatWon(p.price)}원)`, `${p.price}|${p.name}`);
+                    if (idx === 1) opt1.selected = true;
+                    if (idx === 2) opt2.selected = true;
+                    empPlan.add(opt1);
+                    famPlan.add(opt2);
+                });
+            }
 
             // 3. 인터넷 속도
             const netSel = document.getElementById('home-speed');
-            netSel.innerHTML = '';
-            LIVE_DB.internet.forEach((net, idx) => {
-                const opt = new Option(`${net.name} (월 ${formatWon(net.price)}원)`, `${net.price}|${net.name}`);
-                if (idx === 1) opt.selected = true;
-                netSel.add(opt);
-            });
+            if (netSel) {
+                netSel.innerHTML = '';
+                LIVE_DB.internet.forEach((net, idx) => {
+                    const opt = new Option(`${net.name} (월 ${formatWon(net.price)}원)`, `${net.price}|${net.name}`);
+                    if (idx === 1) opt.selected = true;
+                    netSel.add(opt);
+                });
+            }
 
             // 4. IPTV
             const tvSel = document.getElementById('home-tv');
-            tvSel.innerHTML = '';
-            LIVE_DB.iptv.forEach((tv, idx) => {
-                const opt = new Option(`${tv.name} (월 ${formatWon(tv.price)}원)`, `${tv.price}|${tv.name}`);
-                if (idx === 1) opt.selected = true;
-                tvSel.add(opt);
-            });
+            if (tvSel) {
+                tvSel.innerHTML = '';
+                LIVE_DB.iptv.forEach((tv, idx) => {
+                    const opt = new Option(`${tv.name} (월 ${formatWon(tv.price)}원)`, `${tv.price}|${tv.name}`);
+                    if (idx === 1) opt.selected = true;
+                    tvSel.add(opt);
+                });
+            }
 
             // 5. 셋톱박스
             const settopSel = document.getElementById('home-settop');
-            settopSel.innerHTML = '';
-            LIVE_DB.settop.forEach((st, idx) => {
-                const opt = new Option(`${st.name} (월 ${formatWon(st.price)}원)`, `${st.price}|${st.name}`);
-                settopSel.add(opt);
-            });
+            if (settopSel) {
+                settopSel.innerHTML = '';
+                LIVE_DB.settop.forEach((st, idx) => {
+                    settopSel.add(new Option(`${st.name} (월 ${formatWon(st.price)}원)`, `${st.price}|${st.name}`));
+                });
+            }
 
             // 6. 와이파이
             const wifiSel = document.getElementById('home-wifi');
-            wifiSel.innerHTML = '';
-            LIVE_DB.wifi.forEach((wf, idx) => {
-                const opt = new Option(`${wf.name} (월 ${formatWon(wf.price)}원)`, `${wf.price}|${wf.name}`);
-                if (idx === 1) opt.selected = true;
-                wifiSel.add(opt);
-            });
+            if (wifiSel) {
+                wifiSel.innerHTML = '';
+                LIVE_DB.wifi.forEach((wf, idx) => {
+                    const opt = new Option(`${wf.name} (월 ${formatWon(wf.price)}원)`, `${wf.price}|${wf.name}`));
+                    if (idx === 1) opt.selected = true;
+                    wifiSel.add(opt);
+                });
+            }
 
             calculateEmployee();
         }
@@ -481,14 +502,14 @@
                 sessionStorage.setItem('AUTH_CORP', 'KT M&S 마스터 관리자');
                 document.getElementById('auth-gate').style.display = 'none';
                 document.getElementById('logged-corp-badge').innerText = '관리자 권한: jaeng2';
-                errorDiv.classList.add('hidden');
+                if (errorDiv) errorDiv.classList.add('hidden');
                 calculateEmployee();
                 return;
             }
 
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>인증 확인 중...';
-            errorDiv.classList.add('hidden');
+            if (errorDiv) errorDiv.classList.add('hidden');
 
             try {
                 const response = await fetch(APPS_SCRIPT_URL, {
@@ -504,10 +525,10 @@
                     document.getElementById('logged-corp-badge').innerText = `인증 법인: ${corp}`;
                     calculateEmployee();
                 } else {
-                    errorDiv.classList.remove('hidden');
+                    if (errorDiv) errorDiv.classList.remove('hidden');
                 }
             } catch (err) {
-                alert("인증 통신 오류가 발생했습니다.");
+                alert("인증 통신 중 오류가 발생했습니다. 네트워크 상태를 확인하십시오.");
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<span>폐쇄몰 입장하기</span>';
@@ -520,7 +541,8 @@
         }
 
         function toggleApplyModal(show) {
-            document.getElementById('apply-modal').style.display = show ? 'flex' : 'none';
+            const modal = document.getElementById('apply-modal');
+            if (modal) modal.style.display = show ? 'flex' : 'none';
         }
 
         async function handleApplySubmit(e) {
@@ -544,9 +566,13 @@
                     body: JSON.stringify(payload)
                 });
                 alert(`[신청 접수 완료]\n법인명: ${payload.corp}\n검토 후 접속 PASS가 등록된 연락처로 발송됩니다.`);
+                document.getElementById('req-corp').value = '';
+                document.getElementById('req-name').value = '';
+                document.getElementById('req-phone').value = '';
+                document.getElementById('req-email').value = '';
                 toggleApplyModal(false);
             } catch (err) {
-                alert("신청 중 오류가 발생했습니다.");
+                alert("신청 중 오류가 발생했습니다. 구글 계정 배포 권한을 확인하십시오.");
             } finally {
                 reqBtn.disabled = false;
                 reqBtn.innerText = "제휴 승인 요청 등록";
@@ -567,31 +593,32 @@
         function switchTab(tabId) {
             currentTab = tabId;
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+            const targetContent = document.getElementById(`content-${tabId}`);
+            if (targetContent) targetContent.classList.remove('hidden');
 
             ['employee', 'family', 'home'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
-                if(t === tabId) {
+                if (!btn) return;
+                if (t === tabId) {
                     btn.className = "flex-1 py-3.5 px-4 text-center font-bold text-sm sm:text-base rounded-lg transition-all text-white bg-red-600 shadow";
                 } else {
                     btn.className = "flex-1 py-3.5 px-4 text-center font-semibold text-sm sm:text-base text-slate-500 hover:text-slate-900 rounded-lg transition-all";
                 }
             });
 
-            if(tabId === 'employee') calculateEmployee();
-            if(tabId === 'family') calculateFamily();
-            if(tabId === 'home') calculateHome();
+            if (tabId === 'employee') calculateEmployee();
+            if (tabId === 'family') calculateFamily();
+            if (tabId === 'home') calculateHome();
         }
 
         function setEmpJoinType(type) {
             empJoinType = type;
             ['mnp', 'chg', 'new'].forEach(t => {
                 const b = document.getElementById(`emp-type-${t}`);
-                if (t === type) {
-                    b.className = "py-2.5 px-2 border-2 border-red-600 bg-red-50 text-red-700 font-bold text-xs rounded-lg";
-                } else {
-                    b.className = "py-2.5 px-2 border border-slate-300 bg-white text-slate-600 font-bold text-xs rounded-lg";
-                }
+                if (!b) return;
+                b.className = (t === type)
+                    ? "py-2.5 px-2 border-2 border-red-600 bg-red-50 text-red-700 font-bold text-xs rounded-lg"
+                    : "py-2.5 px-2 border border-slate-300 bg-white text-slate-600 font-bold text-xs rounded-lg";
             });
             calculateEmployee();
         }
@@ -600,22 +627,24 @@
             famJoinType = type;
             ['mnp', 'chg', 'new'].forEach(t => {
                 const b = document.getElementById(`fam-type-${t}`);
-                if (t === type) {
-                    b.className = "py-2.5 px-2 border-2 border-red-600 bg-red-50 text-red-700 font-bold text-xs rounded-lg";
-                } else {
-                    b.className = "py-2.5 px-2 border border-slate-300 bg-white text-slate-600 font-bold text-xs rounded-lg";
-                }
+                if (!b) return;
+                b.className = (t === type)
+                    ? "py-2.5 px-2 border-2 border-red-600 bg-red-50 text-red-700 font-bold text-xs rounded-lg"
+                    : "py-2.5 px-2 border border-slate-300 bg-white text-slate-600 font-bold text-xs rounded-lg";
             });
             calculateFamily();
         }
 
         function calculateEmployee() {
-            if (!document.getElementById('emp-device').value) return;
-            const devKey = document.getElementById('emp-device').value.split('|')[0];
-            const [planPrice, planName] = document.getElementById('emp-plan').value.split('|');
+            const devEl = document.getElementById('emp-device');
+            const planEl = document.getElementById('emp-plan');
+            if (!devEl || !planEl || !devEl.value || !planEl.value) return;
+
+            const devKey = devEl.value.split('|')[0];
+            const [planPrice, planName] = planEl.value.split('|');
             const devInfo = LIVE_DB.devices[devKey];
             if (!devInfo) return;
-            
+
             const subsidy = devInfo[empJoinType] || 0;
             const extraEmpBenefit = 100000;
             const totalSupport = subsidy + extraEmpBenefit;
@@ -642,12 +671,15 @@
         }
 
         function calculateFamily() {
-            if (!document.getElementById('fam-device').value) return;
-            const devKey = document.getElementById('fam-device').value.split('|')[0];
-            const [planPrice, planName] = document.getElementById('fam-plan').value.split('|');
+            const devEl = document.getElementById('fam-device');
+            const planEl = document.getElementById('fam-plan');
+            if (!devEl || !planEl || !devEl.value || !planEl.value) return;
+
+            const devKey = devEl.value.split('|')[0];
+            const [planPrice, planName] = planEl.value.split('|');
             const devInfo = LIVE_DB.devices[devKey];
             if (!devInfo) return;
-            
+
             const subsidy = devInfo[famJoinType] || 0;
             const principal = Math.max(0, devInfo.price - subsidy);
             const devMonthly = (principal * 1.059) / 24;
@@ -671,11 +703,16 @@
         }
 
         function calculateHome() {
-            if (!document.getElementById('home-speed').value) return;
-            const [speedPrice, speedName] = document.getElementById('home-speed').value.split('|');
-            const [tvPrice, tvName] = document.getElementById('home-tv').value.split('|');
-            const [settopPrice, settopName] = document.getElementById('home-settop').value.split('|');
-            const [wifiPrice, wifiName] = document.getElementById('home-wifi').value.split('|');
+            const spdEl = document.getElementById('home-speed');
+            const tvEl = document.getElementById('home-tv');
+            const stEl = document.getElementById('home-settop');
+            const wfEl = document.getElementById('home-wifi');
+            if (!spdEl || !tvEl || !stEl || !wfEl || !spdEl.value || !tvEl.value || !stEl.value || !wfEl.value) return;
+
+            const [speedPrice, speedName] = spdEl.value.split('|');
+            const [tvPrice, tvName] = tvEl.value.split('|');
+            const [settopPrice, settopName] = stEl.value.split('|');
+            const [wifiPrice, wifiName] = wfEl.value.split('|');
 
             const rawSum = Number(speedPrice) + Number(tvPrice) + Number(settopPrice) + Number(wifiPrice);
             const comboDiscount = 11000;
@@ -719,7 +756,7 @@
                 alert(`[견적 신청 완료]\n${payload.name} 고객님의 견적이 정상 접수되었습니다.\n신청내역: ${payload.planDetails}\n체감가: ${payload.price}`);
                 document.getElementById('lead-form').reset();
             } catch (err) {
-                alert("전송 중 오류가 발생했습니다.");
+                alert("전송 중 오류가 발생했습니다. 잠시 후 다시 시도해 주십시오.");
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<span>공식 견적서 발송 및 상담 신청</span><i class="fa-solid fa-arrow-right text-xs ml-2"></i>';
