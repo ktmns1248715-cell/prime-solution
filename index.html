@@ -7,13 +7,32 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Pretendard', sans-serif; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body { 
+            font-family: 'Pretendard', sans-serif; 
+            -webkit-user-select: none; 
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none; 
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent; 
+        }
         @media print { body { display: none !important; } }
-        .secure-blur { filter: blur(25px) !important; }
+        .secure-blur { filter: blur(30px) !important; transition: filter 0.2s ease; }
         @media (max-width: 1023px) { .mobile-pad { padding-bottom: 90px; } }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased mobile-pad" oncontextmenu="return false;">
+<body class="bg-slate-50 text-slate-800 antialiased mobile-pad">
+
+    <!-- 보안 경고 토스트 팝업 (우클릭 차단 강조 모달) -->
+    <div id="security-alert" class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-300">
+        <div class="bg-slate-950/90 text-white border-2 border-red-600 px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-md flex items-center space-x-3 max-w-sm mx-4">
+            <i class="fa-solid fa-shield-halved text-red-500 text-2xl animate-pulse"></i>
+            <div>
+                <p class="text-sm font-extrabold text-red-400">보안 경고 (Security Alert)</p>
+                <p class="text-xs font-semibold text-slate-200 mt-0.5">보안 및 정책 유출 방지로 인해 <span class="text-red-400 font-bold">마우스 우클릭이 엄격히 금지</span>됩니다.</p>
+            </div>
+        </div>
+    </div>
 
     <!-- 1. 인증 게이트 -->
     <div id="auth-gate" class="fixed inset-0 bg-slate-950/95 z-50 flex items-center justify-center p-4 backdrop-blur-md">
@@ -105,11 +124,9 @@
                     <span class="text-sm sm:text-lg font-extrabold tracking-tight">Prime Benefit <span class="text-red-600">Solution</span></span>
                 </div>
                 <div class="flex items-center space-x-1.5 sm:space-x-2">
-                    <!-- 담당센터 직통 전화 연결 버튼 -->
                     <a href="tel:010-8290-9971" class="text-[11px] font-bold text-white bg-slate-900 hover:bg-slate-800 border border-slate-700 px-2.5 py-1 rounded-full flex items-center transition shadow-sm">
                         <i class="fa-solid fa-phone-volume mr-1 text-emerald-400"></i>담당센터 연결
                     </a>
-                    <!-- 카카오톡 실시간 상담 버튼 -->
                     <a href="http://pf.kakao.com/_xaXbrn/chat" target="_blank" rel="noopener noreferrer" class="text-[11px] font-bold text-slate-900 bg-[#FEE500] hover:bg-[#FDD835] border border-[#E5CE00] px-2.5 py-1 rounded-full flex items-center transition shadow-sm">
                         <i class="fa-solid fa-comment mr-1 text-slate-900"></i>카톡 상담
                     </a>
@@ -333,10 +350,79 @@
         </button>
     </div>
 
-    <!-- 4. 통합 스크립트 -->
+    <!-- 4. 통합 스크립트 & 보안 방어 엔진 -->
     <script>
         const APPS_URL = "https://script.google.com/macros/s/AKfycbyMkt2f6ed9kub5W6rBMY-Jg1dsimfOy7ACbwv9aIoKP8sBd6JNg6VcSP3S6kvBxiHa/exec";
         
+        // ==================== 강화된 프론트엔드 보안 방어 체계 ====================
+        let alertTimer = null;
+        function triggerSecurityAlert() {
+            const el = document.getElementById('security-alert');
+            el.classList.remove('opacity-0');
+            el.classList.add('opacity-100');
+            if (alertTimer) clearTimeout(alertTimer);
+            alertTimer = setTimeout(() => {
+                el.classList.remove('opacity-100');
+                el.classList.add('opacity-0');
+            }, 2000);
+        }
+
+        // 1. 마우스 우클릭 차단 및 경고 모달 실행
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            triggerSecurityAlert();
+            return false;
+        });
+
+        // 2. 키보드 단축키 원천 차단 (F12, 소스보기, 콘솔 등)
+        document.addEventListener('keydown', function(e) {
+            // F12 차단
+            if (e.key === 'F12' || e.keyCode === 123) {
+                e.preventDefault();
+                e.stopPropagation();
+                triggerSecurityAlert();
+                return false;
+            }
+            // Ctrl/Cmd + Shift + I/J/C (개발자도구 / 콘솔 / 요소선택)
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)) {
+                e.preventDefault();
+                e.stopPropagation();
+                triggerSecurityAlert();
+                return false;
+            }
+            // Ctrl/Cmd + U (소스 보기)
+            if ((e.ctrlKey || e.metaKey) && ['u', 'U'].includes(e.key)) {
+                e.preventDefault();
+                e.stopPropagation();
+                triggerSecurityAlert();
+                return false;
+            }
+            // Ctrl/Cmd + S (저장), Ctrl/Cmd + P (인쇄)
+            if ((e.ctrlKey || e.metaKey) && ['s', 'S', 'p', 'P'].includes(e.key)) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        });
+
+        // 3. 브라우저 창 전환 시 블러 처리 (화면 캡처/유출 방어)
+        window.addEventListener('blur', function() {
+            document.body.classList.add('secure-blur');
+        });
+        window.addEventListener('focus', function() {
+            document.body.classList.remove('secure-blur');
+        });
+
+        // 4. 개발자도구 역추적 무력화 (Anti-Debugging)
+        setInterval(function() {
+            const start = performance.now();
+            (function() {}["constructor"]("debugger")());
+            if (performance.now() - start > 100) {
+                document.body.innerHTML = "<div class='flex items-center justify-center min-h-screen text-slate-900 font-extrabold text-xl'>보안 위협이 감지되어 세션이 차단되었습니다.</div>";
+            }
+        }, 1000);
+
+        // ==================== 견적 연산 및 데이터 엔진 ====================
         let DB = {
             devices: {
                 "SM-S948NK": { name: "갤럭시 S26 Ultra", price: 1797400, mnp: 500000, chg: 500000, new: 500000, empExtra: 50000, famExtra: 10000 },
