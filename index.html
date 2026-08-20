@@ -23,7 +23,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased mobile-pad">
 
-    <!-- 보안 경고 토스트 팝업 (우클릭 차단 강조 모달) -->
+    <!-- 보안 경고 토스트 팝업 -->
     <div id="security-alert" class="fixed inset-0 z-[100] flex items-center justify-center pointer-events-none opacity-0 transition-opacity duration-300">
         <div class="bg-slate-950/90 text-white border-2 border-red-600 px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-md flex items-center space-x-3 max-w-sm mx-4">
             <i class="fa-solid fa-shield-halved text-red-500 text-2xl animate-pulse"></i>
@@ -154,7 +154,7 @@
                     <div id="content-employee" class="tab-content space-y-4">
                         <div class="border-b pb-2">
                             <h2 class="text-base font-bold text-slate-900">임직원 본인 전용 견적</h2>
-                            <p class="text-[11px] text-slate-500">공통지원금 / 선택약정 25% 및 할부 개월 수 실시간 연동</p>
+                            <p class="text-[11px] text-slate-500">임직원 추가 지원금 + 공통지원금 / 선택약정 25% 실시간 연동</p>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">1. 단말기 모델 선택</label>
@@ -193,7 +193,7 @@
                     <div id="content-family" class="tab-content space-y-4 hidden">
                         <div class="border-b pb-2">
                             <h2 class="text-base font-bold text-slate-900">가족·지인 추천 견적</h2>
-                            <p class="text-[11px] text-slate-500">가족 특별 지원금 + 공통지원금/선택약정 실시간 연동</p>
+                            <p class="text-[11px] text-slate-500">가족 특별 추가 지원금 + 공통지원금/선택약정 실시간 연동</p>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1">1. 단말기 모델 선택</label>
@@ -288,11 +288,24 @@
                                 <span>단말 출고가</span>
                                 <span id="out-base" class="text-slate-300">0 원</span>
                             </div>
+
+                            <!-- 공통지원금 및 추가지원금 세부 분리 영역 -->
+                            <div class="bg-slate-950/40 p-2.5 rounded-lg border border-slate-800/80 space-y-1.5 my-1">
+                                <div class="flex justify-between text-slate-400 text-[11px]">
+                                    <span>ㄴ 공통지원금 (공시할인)</span>
+                                    <span id="out-pub-disc" class="text-slate-300">- 0 원</span>
+                                </div>
+                                <div class="flex justify-between text-red-400 font-bold text-xs">
+                                    <span class="flex items-center"><i class="fa-solid fa-gift mr-1 text-red-500"></i>추가 지원금 (폐쇄몰 단독)</span>
+                                    <span id="out-extra-disc">- 0 원</span>
+                                </div>
+                            </div>
+
                             <div class="flex justify-between text-red-400 font-bold">
                                 <span>총 단말 할인금</span>
                                 <span id="out-disc">- 0 원</span>
                             </div>
-                            <div class="flex justify-between text-slate-300">
+                            <div class="flex justify-between text-slate-300 border-t border-slate-800/60 pt-1.5">
                                 <span>단말 할부원금</span>
                                 <span id="out-prin" class="font-semibold text-white">0 원</span>
                             </div>
@@ -350,11 +363,10 @@
         </button>
     </div>
 
-    <!-- 4. 통합 스크립트 & 보안 방어 엔진 -->
+    <!-- 4. 통합 스크립트 & 보안 엔진 -->
     <script>
         const APPS_URL = "https://script.google.com/macros/s/AKfycbyMkt2f6ed9kub5W6rBMY-Jg1dsimfOy7ACbwv9aIoKP8sBd6JNg6VcSP3S6kvBxiHa/exec";
         
-        // ==================== 강화된 프론트엔드 보안 방어 체계 ====================
         let alertTimer = null;
         function triggerSecurityAlert() {
             const el = document.getElementById('security-alert');
@@ -367,53 +379,37 @@
             }, 2000);
         }
 
-        // 1. 마우스 우클릭 차단 및 경고 모달 실행
         document.addEventListener('contextmenu', function(e) {
             e.preventDefault();
             triggerSecurityAlert();
             return false;
         });
 
-        // 2. 키보드 단축키 원천 차단 (F12, 소스보기, 콘솔 등)
         document.addEventListener('keydown', function(e) {
-            // F12 차단
             if (e.key === 'F12' || e.keyCode === 123) {
-                e.preventDefault();
-                e.stopPropagation();
+                e.preventDefault(); e.stopPropagation();
                 triggerSecurityAlert();
                 return false;
             }
-            // Ctrl/Cmd + Shift + I/J/C (개발자도구 / 콘솔 / 요소선택)
             if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)) {
-                e.preventDefault();
-                e.stopPropagation();
+                e.preventDefault(); e.stopPropagation();
                 triggerSecurityAlert();
                 return false;
             }
-            // Ctrl/Cmd + U (소스 보기)
             if ((e.ctrlKey || e.metaKey) && ['u', 'U'].includes(e.key)) {
-                e.preventDefault();
-                e.stopPropagation();
+                e.preventDefault(); e.stopPropagation();
                 triggerSecurityAlert();
                 return false;
             }
-            // Ctrl/Cmd + S (저장), Ctrl/Cmd + P (인쇄)
             if ((e.ctrlKey || e.metaKey) && ['s', 'S', 'p', 'P'].includes(e.key)) {
-                e.preventDefault();
-                e.stopPropagation();
+                e.preventDefault(); e.stopPropagation();
                 return false;
             }
         });
 
-        // 3. 브라우저 창 전환 시 블러 처리 (화면 캡처/유출 방어)
-        window.addEventListener('blur', function() {
-            document.body.classList.add('secure-blur');
-        });
-        window.addEventListener('focus', function() {
-            document.body.classList.remove('secure-blur');
-        });
+        window.addEventListener('blur', function() { document.body.classList.add('secure-blur'); });
+        window.addEventListener('focus', function() { document.body.classList.remove('secure-blur'); });
 
-        // 4. 개발자도구 역추적 무력화 (Anti-Debugging)
         setInterval(function() {
             const start = performance.now();
             (function() {}["constructor"]("debugger")());
@@ -422,7 +418,6 @@
             }
         }, 1000);
 
-        // ==================== 견적 연산 및 데이터 엔진 ====================
         let DB = {
             devices: {
                 "SM-S948NK": { name: "갤럭시 S26 Ultra", price: 1797400, mnp: 500000, chg: 500000, new: 500000, empExtra: 50000, famExtra: 10000 },
@@ -629,8 +624,9 @@
             const dev = DB.devices[devKey];
             if (!dev) return;
 
-            let totalDisc = dev.empExtra || 0;
-            if (empDisc === 'public') totalDisc += (dev[empType] || 0);
+            const extraDisc = Number(dev.empExtra || 0);
+            const publicDisc = empDisc === 'public' ? Number(dev[empType] || 0) : 0;
+            const totalDisc = extraDisc + publicDisc;
 
             const principal = Math.max(0, dev.price - totalDisc);
             let devMonthly = empInst === 24 ? (principal * 1.118) / 24 : (empInst === 36 ? (principal * 1.177) / 36 : 0);
@@ -641,8 +637,8 @@
             const discLabel = empDisc === 'select' ? '선택약정(25%요금할인)' : '공통지원금(단말할인)';
             const instLabel = empInst === 0 ? '일시납' : `${empInst}개월할부`;
 
-            detailText = `[임직원] ${dev.name} | ${joinLabel} | ${discLabel} | ${instLabel} | 월 ${fmt(finalWon)}원`;
-            renderMobileOut(dev.name, `${joinLabel} / ${discLabel} / ${instLabel}`, dev.price, totalDisc, principal, Math.round(devMonthly), Math.round(planMonthly), finalWon);
+            detailText = `[임직원] ${dev.name} | ${joinLabel} | ${discLabel} | 추가지원금: ${fmt(extraDisc)}원 | ${instLabel} | 월 ${fmt(finalWon)}원`;
+            renderMobileOut(dev.name, `${joinLabel} / ${discLabel} / ${instLabel}`, dev.price, publicDisc, extraDisc, totalDisc, principal, Math.round(devMonthly), Math.round(planMonthly), finalWon);
         }
 
         function calcFam() {
@@ -651,8 +647,9 @@
             const dev = DB.devices[devKey];
             if (!dev) return;
 
-            let totalDisc = dev.famExtra || 0;
-            if (famDisc === 'public') totalDisc += (dev[famType] || 0);
+            const extraDisc = Number(dev.famExtra || 0);
+            const publicDisc = famDisc === 'public' ? Number(dev[famType] || 0) : 0;
+            const totalDisc = extraDisc + publicDisc;
 
             const principal = Math.max(0, dev.price - totalDisc);
             let devMonthly = famInst === 24 ? (principal * 1.118) / 24 : (famInst === 36 ? (principal * 1.177) / 36 : 0);
@@ -663,15 +660,20 @@
             const discLabel = famDisc === 'select' ? '선택약정(25%요금할인)' : '공통지원금(단말할인)';
             const instLabel = famInst === 0 ? '일시납' : `${famInst}개월할부`;
 
-            detailText = `[가족] ${dev.name} | ${joinLabel} | ${discLabel} | ${instLabel} | 월 ${fmt(finalWon)}원`;
-            renderMobileOut(dev.name, `${joinLabel} / ${discLabel} / ${instLabel}`, dev.price, totalDisc, principal, Math.round(devMonthly), Math.round(planMonthly), finalWon);
+            detailText = `[가족] ${dev.name} | ${joinLabel} | ${discLabel} | 추가지원금: ${fmt(extraDisc)}원 | ${instLabel} | 월 ${fmt(finalWon)}원`;
+            renderMobileOut(dev.name, `${joinLabel} / ${discLabel} / ${instLabel}`, dev.price, publicDisc, extraDisc, totalDisc, principal, Math.round(devMonthly), Math.round(planMonthly), finalWon);
         }
 
-        function renderMobileOut(n, c, base, disc, prin, devM, planM, finalP) {
+        function renderMobileOut(n, c, base, pubDisc, extraDisc, totalDisc, prin, devM, planM, finalP) {
             document.getElementById('out-name').innerText = n;
             document.getElementById('out-cond').innerText = c;
             document.getElementById('out-base').innerText = `${fmt(base)} 원`;
-            document.getElementById('out-disc').innerText = `- ${fmt(disc)} 원`;
+            
+            // 세부 지원금 반영
+            document.getElementById('out-pub-disc').innerText = `- ${fmt(pubDisc)} 원`;
+            document.getElementById('out-extra-disc').innerText = `- ${fmt(extraDisc)} 원`;
+            
+            document.getElementById('out-disc').innerText = `- ${fmt(totalDisc)} 원`;
             document.getElementById('out-prin').innerText = `${fmt(prin)} 원`;
             document.getElementById('detail-dev').innerText = `월 ${fmt(devM)} 원`;
             document.getElementById('detail-plan').innerText = `월 ${fmt(planM)} 원`;
